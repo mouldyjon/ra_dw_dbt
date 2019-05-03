@@ -1,0 +1,1 @@
+select * from {{ source('harvest', 'invoice_payments') }}
