@@ -8,6 +8,10 @@ sources:
       - name: contacts
         identifier: contacts
         loaded_at_field: _sdc_sequence
+      - name: accounts
+        loaded_at_field: _sdc_sequence
+      - name: bank_transactions
+        loaded_at_field: _sdc_sequence
   - name: hubspot
     database: ra-development
     schema: hubspot
