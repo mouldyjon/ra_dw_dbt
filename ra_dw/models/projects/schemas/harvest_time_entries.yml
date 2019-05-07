@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: harvest_time_entries
+
+    columns:
+        - name: id
+          description: "Unique identifier of a Harvest time entry, primary key"
+          tests:
+              - unique
+              - not_null

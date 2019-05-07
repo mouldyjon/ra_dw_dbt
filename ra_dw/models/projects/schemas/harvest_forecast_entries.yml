@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: harvest_forecast_entries
+
+    columns:
+        - name: id
+          description: "Unique identifier of a Harvest forecast entry, primary key"
+          tests:
+              - unique
+              - not_null

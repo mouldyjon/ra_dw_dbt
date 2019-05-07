@@ -4,12 +4,17 @@
     )
 }}
 
-select * from (
-SELECT *, max(_sdc_sequence) over (partition by id order by _sdc_sequence RANGE BETWEEN UNBOUNDED PRECEDING AND unbounded following) as latest_sdc_sequence
-FROM {{ ref('harvest_base_time_entries') }})
-where _sdc_sequence = latest_sdc_sequence
-
+SELECT
+    *
+FROM (
+    SELECT
+        *,
+        MAX(_sdc_sequence) OVER (PARTITION BY id ORDER BY _sdc_sequence RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS latest_sdc_sequence
+    FROM
+        {{ ref('harvest_base_time_entries') }}
+    )
+WHERE
+    _sdc_sequence = latest_sdc_sequence
 {% if is_incremental() %}
-and _sdc_sequence > (select max(_sdc_sequence) from {{ this }})
+    AND _sdc_sequence > (SELECT max(_sdc_sequence) FROM {{ this }})
 {% endif %}
-
