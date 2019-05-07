@@ -17,7 +17,7 @@ SELECT
   concat(concat(metadata.from.firstname,' '),metadata.from.lastname) communications_from_firstname_lastname,
   metadata.status communications_status,
   metadatacc.email communications_cc_email
-from `ra-development.stitch_hubspot.engagements`,
+from {{ ref('hubspot_engagements') }},
 unnest(associations.companyids) WITH OFFSET off,
 unnest(associations.dealids),
 unnest(metadata.cc) metadatacc,

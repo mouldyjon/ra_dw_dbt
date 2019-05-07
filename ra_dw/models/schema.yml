@@ -12,6 +12,11 @@ sources:
         loaded_at_field: _sdc_sequence
       - name: bank_transactions
         loaded_at_field: _sdc_sequence
+  - name: xero_reports
+    database: ra-development
+    schema: xero_reports
+    tables:
+      - name: profit_and_loss
   - name: hubspot
     database: ra-development
     schema: hubspot
