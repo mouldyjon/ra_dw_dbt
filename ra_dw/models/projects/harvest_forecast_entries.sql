@@ -14,7 +14,7 @@ WITH assignments AS (
             project_id,
             start_date,
             end_date,
-            {{ dbt_utils.datediff(start_date, end_date, 'day')}} +1 AS forecast_days,
+            {{ dbt_utils.datediff('start_date', 'end_date', 'day')}} +1 AS forecast_days,
             a._sdc_sequence ,
             MAX(a._sdc_sequence) OVER (PARTITION BY a.id ORDER BY a._sdc_sequence RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS latest_sdc_sequence
         FROM
