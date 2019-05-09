@@ -18,7 +18,7 @@ WITH event_type_seq_final AS (
             event_ts,
             is_new_session,
             SUM(is_new_session) OVER (ORDER BY customer_id ASC, event_ts ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS global_session_id,
-            SUM(is_new_session) OVER (PARTITION BY customer_id ORDER BY event_ts ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS user_session_id
+            SUM(is_new_session) {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS user_session_id
         FROM
             (SELECT
                 *,

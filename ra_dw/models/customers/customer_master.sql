@@ -19,7 +19,6 @@ FROM
     FROM
         (SELECT
             customer_name,
-            ROW_NUMBER() OVER (PARTITION BY LOWER(customer_name)) AS c_r,
             hubspot_company_id,
             xero_contact_id,
             harvest_customer_id,
@@ -47,10 +46,11 @@ FROM
             hubspot_type,
             hubspot_state,
             hubspot_lifecycle_stage,
-            hubspot_description
+            hubspot_description,
+            ROW_NUMBER() OVER (PARTITION BY LOWER(customer_name)) AS c_r
         FROM
             {{ ref('combined_raw_companies') }}
-        {{ dbt_utils.group_by(n=30) }}
+        {{ dbt_utils.group_by(n=29) }}
         ORDER BY
             1)
     WHERE
