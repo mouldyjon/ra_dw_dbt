@@ -17,8 +17,12 @@ date_diff(date(event_ts),min(date(event_ts)) over (partition by customer_id orde
 date_diff(date(event_ts),min(date(event_ts)) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING), WEEK) weeks_since_first_contact_day,
 min(case when event_type = 'Client Invoiced' then event_ts end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) first_invoice_day_ts,
 max(case when event_type = 'Client Invoiced' then event_ts end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) last_invoice_day_ts,
+max(case when event_type = 'Site Visited' then event_ts end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) last_site_visit_day_ts,
 max(case when event_type = 'Billable Day' then true else false end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as billable_client,
-max(case when event_type like '%Sales%' then true else false end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as sales_prospect
+max(case when event_type like '%Sales%' then true else false end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as sales_prospect,
+max(case when event_type like '%Sales%' then true else false end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as site_visitor,
+max(case when event_details like '%Blog%' then true else false end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as blog_reader,
+max(case when event_details like '%Podcast%' then true else false end) over (partition by customer_id order by event_ts rows between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as podcast_reader
 from (
 -- sales opportunity stages
 SELECT 
@@ -109,5 +113,29 @@ select invoices.paid_at AS event_ts,
   LEFT JOIN {{ ref('harvest_invoices') }}  AS invoices ON customer_master.harvest_customer_id = invoices.client_id
   where invoices.paid_at is not null
 GROUP BY 1,2,3,4,5)
+union all
+select pageviews.timestamp AS event_ts,
+        customer_master.customer_id  AS customer_id,
+           customer_master.customer_name as customer_name,
+
+  pageviews.page_subcategory  AS event_details,
+  'Site Visited' as event_type,
+  sum(1) as event_value
+  FROM {{ ref('customer_master') }}  AS customer_master
+  LEFT JOIN {{ ref('pageviews') }} AS pageviews ON customer_master.customer_name = pageviews.network
+GROUP BY 1,2,3,4,5
+
+
 )
 where customer_name not in ('Rittman Analytics','MJR Analytics')
+
+
+
+
+
+
+
+
+
+
+
