@@ -12,7 +12,9 @@ SELECT
     {{ dbt_utils.datediff('first_billable_day_ts', current_timestamp(), 'month')}} AS months_since_first_billable_day,
     {{ dbt_utils.datediff('first_billable_day_ts', current_timestamp(), 'week')}} AS weeks_since_first_billable_day,
     {{ dbt_utils.datediff('first_contact_ts', current_timestamp(), 'month')}} AS months_since_first_contact_day,
-    {{ dbt_utils.datediff('first_contact_ts', current_timestamp(), 'week')}} AS weeks_since_first_contact_day
+    {{ dbt_utils.datediff('first_contact_ts', current_timestamp(), 'week')}} AS weeks_since_first_contact_day,
+    {{ dbt_utils.datediff('last_site_visit_day_ts', current_timestamp(), 'month')}} AS months_since_last_site_visit_day,
+    {{ dbt_utils.datediff('last_site_visit_day_ts', current_timestamp(), 'week')}} AS weeks_since_last_site_visit_day
 FROM
   (SELECT
       *,
@@ -25,6 +27,8 @@ FROM
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS first_invoice_day_ts,
       MAX(CASE WHEN event_type = 'Client Invoiced' THEN event_ts END)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS last_invoice_day_ts,
+      MAX(CASE WHEN event_type = 'Site Visited' THEN event_ts END)
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS last_site_visit_day_ts,
       MAX(CASE WHEN event_type = 'Incoming Email' THEN event_ts END)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS last_incoming_email_ts,
       MAX(CASE WHEN event_type = 'Outgoing Email' THEN event_ts END)
@@ -34,7 +38,13 @@ FROM
       MAX(CASE WHEN event_type = 'Billable Day' THEN true ELSE false END)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS billable_client,
       MAX(CASE WHEN event_type LIKE '%Sales%' THEN true ELSE false END)
-          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS sales_prospect
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS sales_prospect,
+      MAX(CASE WHEN event_type LIKE '%Site Visited%' THEN true ELSE false END)
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS site_visitor,
+      MAX(CASE WHEN event_details LIKE '%Blog%' THEN true ELSE false END)
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS blog_reader,
+      MAX(CASE WHEN event_type LIKE '%Podcast%' THEN true ELSE false END)
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS podcast_reader
   FROM
   -- sales opportunity stages
       (SELECT
@@ -132,12 +142,26 @@ FROM
       HAVING
   	     (COALESCE(SUM(invoice_line_items.amount ), 0) < 0)
   UNION ALL
+      SELECT 
+              pageviews.timestamp AS event_ts,
+              customer_master.customer_id  AS customer_id,
+              customer_master.customer_name AS customer_name,
+              pageviews.page_subcategory AS event_details,
+              'Site Visited' AS event_type,
+              sum(1) as event_value
+      FROM 
+          {{ ref('customer_master') }}  AS customer_master
+     LEFT JOIN 
+          {{ ref('pageviews') }} AS pageviews 
+          ON customer_master.customer_name = pageviews.network
+      {{ dbt_utils.group_by(n=5) }}
+  UNION ALL
       SELECT
           *
       FROM
           (SELECT
               invoices.paid_at AS event_ts,
-  	          customer_master.customer_id AS customer_id,
+  	      customer_master.customer_id AS customer_id,
               customer_master.customer_name AS customer_name,
               invoices.subject AS event_details,
               CASE WHEN invoices.paid_at <= invoices.due_date THEN 'Client Paid' ELSE 'Client Paid Late' END AS event_type,

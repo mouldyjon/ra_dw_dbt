@@ -12,7 +12,8 @@ SELECT
     CASE WHEN harvest_customer_id IS NOT null THEN true ELSE false END AS is_services_client,
     CASE WHEN hubspot_company_id IS NOT null THEN true ELSE false END AS is_crm_tracked_client,
     CASE WHEN xero_is_supplier IS true THEN true ELSE false END AS is_supplier_company,
-    *
+    CASE WHEN site_visitor_category IS NOT null THEN true ELSE false END AS is_site_visitor,    
+*
 FROM
     (SELECT
         *
@@ -22,6 +23,7 @@ FROM
             hubspot_company_id,
             xero_contact_id,
             harvest_customer_id,
+            site_visitor_customer_id,
             harvest_address,
             xero_is_customer,
             xero_is_supplier,
@@ -41,16 +43,17 @@ FROM
             hubspot_industry,
             hubspot_linkedin_bio,
             hubspot_is_public,
-            hubspot_domain,
+            coalesce(hubspot_domain, site_visitor_domain) as web_domain,
             hubspot_created_date,
             hubspot_type,
             hubspot_state,
             hubspot_lifecycle_stage,
             hubspot_description,
+            site_visitor_subcategory, site_visitor_category,
             ROW_NUMBER() OVER (PARTITION BY LOWER(customer_name)) AS c_r
         FROM
             {{ ref('combined_raw_companies') }}
-        {{ dbt_utils.group_by(n=29) }}
+        {{ dbt_utils.group_by(n=32) }}
         ORDER BY
             1)
     WHERE
