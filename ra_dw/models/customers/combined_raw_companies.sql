@@ -1,3 +1,4 @@
+
 SELECT
     COALESCE(
       COALESCE(hub.hubspot_company_name,
@@ -14,3 +15,4 @@ FULL OUTER JOIN
 FULL OUTER JOIN
     {{ ref('xero_companies') }} xer
     ON LOWER(hub.hubspot_company_name) = LOWER(xer.xero_customer_name)
+
