@@ -9,10 +9,6 @@ SELECT
     {{ dbt_utils.datediff('last_billable_day_ts', current_timestamp(), 'day')}} AS days_since_last_billable_day,
     {{ dbt_utils.datediff('last_incoming_email_ts', current_timestamp(), 'day')}} AS days_since_last_incoming_email,
     {{ dbt_utils.datediff('last_outgoing_email_ts', current_timestamp(), 'day')}} AS days_since_last_outgoing_email,
-    {{ dbt_utils.datediff('first_billable_day_ts', current_timestamp(), 'month')}} AS months_since_first_billable_day,
-    {{ dbt_utils.datediff('first_billable_day_ts', current_timestamp(), 'week')}} AS weeks_since_first_billable_day,
-    {{ dbt_utils.datediff('first_contact_ts', current_timestamp(), 'month')}} AS months_since_first_contact_day,
-    {{ dbt_utils.datediff('first_contact_ts', current_timestamp(), 'week')}} AS weeks_since_first_contact_day,
     {{ dbt_utils.datediff('last_site_visit_day_ts', current_timestamp(), 'month')}} AS months_since_last_site_visit_day,
     {{ dbt_utils.datediff('last_site_visit_day_ts', current_timestamp(), 'week')}} AS weeks_since_last_site_visit_day
 FROM
@@ -35,6 +31,13 @@ FROM
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS last_outgoing_email_ts,
       MIN(event_ts)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS first_contact_ts,
+      DATE_DIFF(date(event_ts),MIN(CASE WHEN event_type = 'Billable Day' THEN date(event_ts) END)          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }},MONTH) AS months_since_first_billable_day,
+      DATE_DIFF(date(event_ts),MIN(CASE WHEN event_type = 'Billable Day' THEN date(event_ts) END)
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }},WEEK) AS weeks_since_first_billable_day,
+      DATE_DIFF(date(event_ts),MIN(CASE WHEN event_type like '%Email%' THEN date(event_ts) END)
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }},MONTH) AS months_since_first_contact_day,
+      DATE_DIFF(date(event_ts),MIN(CASE WHEN event_type like '%Email%' THEN date(event_ts) END)
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }},WEEK) AS weeks_since_first_contact_day,
       MAX(CASE WHEN event_type = 'Billable Day' THEN true ELSE false END)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS billable_client,
       MAX(CASE WHEN event_type LIKE '%Sales%' THEN true ELSE false END)
