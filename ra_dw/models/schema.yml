@@ -13,11 +13,11 @@ sources:
       - name: bank_transactions
         loaded_at_field: _sdc_sequence
   - name: fivetran_mailchimp
-    database: ra_development
-    schema: fivetran_mailchimp
+    database: ra-development
+    schema: mailchimp
     tables:
       - name: member
-        identifier: id
+        identifier: member
         loaded_at_field: _fivetran_synced
   - name: xero_reports
     database: ra-development
