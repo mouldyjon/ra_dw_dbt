@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: harvest_invoices
+
+    columns:
+        - name: id
+          description: "Unique identifier of a Harvest invoice entry, primary key"
+          tests:
+              - unique
+              - not_null

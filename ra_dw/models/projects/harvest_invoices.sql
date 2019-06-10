@@ -1,9 +1,8 @@
 {{
     config(
-        materialized='incremental'
+        materialized='table'
     )
 }}
-
 SELECT
     *
 FROM (
@@ -17,7 +16,3 @@ FROM (
     )
 WHERE
     _sdc_sequence = latest_sdc_sequence
-{% if is_incremental() %}
-    AND _sdc_sequence > (SELECT max(_sdc_sequence) FROM {{ this }})
-{% endif %}
-
