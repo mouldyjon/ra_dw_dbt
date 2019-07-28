@@ -1,0 +1,45 @@
+
+# For more information on how to configure this file, please see:
+# https://github.com/fishtown-analytics/dbt/blob/master/sample.profiles.yml
+
+default:
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account-json
+      project: ra-development
+      dataset: ra_data_warehouse_dbt_dev
+      location: europe-west2
+      threads: 1
+      timeout_seconds: 300
+      keyfile_json:
+        type: service_account
+        project_id: ra-development
+        private_key_id: f14ff3e3f832464e2f02f6cc964e1bdcf1ca4fb4
+        private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCak81BHGR40Ktl\nw5Le5hNMQgg9qsK/kgx1fOJGFqPRtte6L3j93heFbgJQt1Bbo+8kotHHnJUdre69\nXSG1pMHq4LBVkCESTPHl4A+4mEwcU+JW5k6Wg0z8c2fFtawnW1l2n5XCsjTX9GZm\nUMqdzgtKvEgEp156mAGIlH1IEOIuu1Mo/Us1gg502K4d/8Q4dwlmonZwX7epcf2B\nI9tcOvNodT5eYsJTL8C9boE9Jy9HSAaDLVXPkRuyEYDNtjNJ30HgTiLeM+f+LgyL\nKgq8u8J/cA7Pz9ymQrhlCS+OjHLQb2S/tiWU6SsVgisKK4SAVhRNrma3BXkrUwlg\nj72G3Qg9AgMBAAECggEADU169IeE/gC3P2K9WQFj18Q3AVeYuvPOrq24q193aaza\nk+NR/kcGryzwdhHQkJJjGjwI4azQCGXXjeRd6kvrhFMh2bs1nWWRy76km7Y/lpCB\nggj/6mQSVAd6fsFLt3ddE6BYOxErCwq1ZUi+pyX8QspBSGU+9D3wo9hjj7gkPvEt\nwV1ZqYVMFOF1u05u7ALT5VdzEbXxj8DUc4UPmllXv4YHChznrlB7JtKRBAKMsyLa\nAxtw6Pjaphxys8Wvxn7Zn4wy9/VCMXZfhXUh0yoiP9SblWtycgqNTvqxKBUN2lQM\n2/ttz2dQpY4bWr85FWfpV9ySjDC0YDRQyOZXJ8qe4QKBgQDTdoDRCIJF/ObToYUh\noviu4/OkgdytfsCVGg1kQYbx2M8k+9ZgsuVLYLTLdCgpNK+POpmbsatrsOYp6Y6V\np86u3CqT6ZS9Nzdid/B8VjXZmdKopoWIx/8l0R0eUfPKxY52DNrS7DS5AG6Uecm3\nHugsf+ILyKF5wuo55ITLXyMrKwKBgQC7Ii+4rwsmDgZuyUWEsna7dLuCt/9xCNBy\nAm9JvbOMO95ytMw1itwA1QWcEXVean25ds8YsOGHYczkIpgFqKnORw1LOfervjkS\nHeg/8/XeRvuny0k+juB4XRdFw2Uv4KuXL2TdPhPxrgHBAqXlIu1q5pXHG0UbU64f\nImRFZQNGNwKBgC1bSKwNYCv03+naxjx9wUt592N8u0G3Y0VX7jFn4LL1JxEutz/M\nf2QYnQ7anlagR1u4XQRJKpSRv/yTbRLqiGl3LebF/jJLqqSDR2DT+P7wgH/OH+xD\nwZVx8gXz3A/NKg5mGXWOVoyr7AwKx1pw1and0DVo1kHQrf625kjc4iU7AoGAat8X\nSe4N++m+mr6vyRzy2hPMktbqN2/FO5dQX1jLlacLX48JoPpwsrj1vy/pS8adjrHf\njEZYRq0ACroHABRXBctmODQe0iKNDV+vJ/b3z73SMv3SErweTh88D0eMHk+9L1aN\n0ByH31p0/fm5LKdJ1+dgWpmkWfrsUjOd+FO8DvkCgYA8fLXWYkknSfZQ1kNBxpxm\nhu37MqVcKRXqLkkYAc+EvUvAvcZEv0uOH2cFRD0xKkayC+zfka6GZKzyQkGVFZ0B\ndbx+P1DaJXEYDfgMRyNjgeQnuOMwpF3yxK1/a82NQp+U8yokUAhrMx+MU2lV63kU\n4pwP8a7c+qJt6RzBWGN9Gg==\n-----END PRIVATE KEY-----\n"
+        client_email: dbt-578@ra-development.iam.gserviceaccount.com
+        client_id: 100669809469159724177
+        auth_uri: https://accounts.google.com/o/oauth2/auth
+        token_uri: https://oauth2.googleapis.com/token
+        auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+        client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/dbt-578%40ra-development.iam.gserviceaccount.com
+    prd:
+      type: bigquery
+      method: service-account-json
+      project: ra-development
+      dataset: ra_data_warehouse_dbt_dev
+      location: europe-west2
+      threads: 1
+      timeout_seconds: 300
+      keyfile_json:
+        type: service_account
+        project_id: ra-development
+        private_key_id: f14ff3e3f832464e2f02f6cc964e1bdcf1ca4fb4
+        private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCak81BHGR40Ktl\nw5Le5hNMQgg9qsK/kgx1fOJGFqPRtte6L3j93heFbgJQt1Bbo+8kotHHnJUdre69\nXSG1pMHq4LBVkCESTPHl4A+4mEwcU+JW5k6Wg0z8c2fFtawnW1l2n5XCsjTX9GZm\nUMqdzgtKvEgEp156mAGIlH1IEOIuu1Mo/Us1gg502K4d/8Q4dwlmonZwX7epcf2B\nI9tcOvNodT5eYsJTL8C9boE9Jy9HSAaDLVXPkRuyEYDNtjNJ30HgTiLeM+f+LgyL\nKgq8u8J/cA7Pz9ymQrhlCS+OjHLQb2S/tiWU6SsVgisKK4SAVhRNrma3BXkrUwlg\nj72G3Qg9AgMBAAECggEADU169IeE/gC3P2K9WQFj18Q3AVeYuvPOrq24q193aaza\nk+NR/kcGryzwdhHQkJJjGjwI4azQCGXXjeRd6kvrhFMh2bs1nWWRy76km7Y/lpCB\nggj/6mQSVAd6fsFLt3ddE6BYOxErCwq1ZUi+pyX8QspBSGU+9D3wo9hjj7gkPvEt\nwV1ZqYVMFOF1u05u7ALT5VdzEbXxj8DUc4UPmllXv4YHChznrlB7JtKRBAKMsyLa\nAxtw6Pjaphxys8Wvxn7Zn4wy9/VCMXZfhXUh0yoiP9SblWtycgqNTvqxKBUN2lQM\n2/ttz2dQpY4bWr85FWfpV9ySjDC0YDRQyOZXJ8qe4QKBgQDTdoDRCIJF/ObToYUh\noviu4/OkgdytfsCVGg1kQYbx2M8k+9ZgsuVLYLTLdCgpNK+POpmbsatrsOYp6Y6V\np86u3CqT6ZS9Nzdid/B8VjXZmdKopoWIx/8l0R0eUfPKxY52DNrS7DS5AG6Uecm3\nHugsf+ILyKF5wuo55ITLXyMrKwKBgQC7Ii+4rwsmDgZuyUWEsna7dLuCt/9xCNBy\nAm9JvbOMO95ytMw1itwA1QWcEXVean25ds8YsOGHYczkIpgFqKnORw1LOfervjkS\nHeg/8/XeRvuny0k+juB4XRdFw2Uv4KuXL2TdPhPxrgHBAqXlIu1q5pXHG0UbU64f\nImRFZQNGNwKBgC1bSKwNYCv03+naxjx9wUt592N8u0G3Y0VX7jFn4LL1JxEutz/M\nf2QYnQ7anlagR1u4XQRJKpSRv/yTbRLqiGl3LebF/jJLqqSDR2DT+P7wgH/OH+xD\nwZVx8gXz3A/NKg5mGXWOVoyr7AwKx1pw1and0DVo1kHQrf625kjc4iU7AoGAat8X\nSe4N++m+mr6vyRzy2hPMktbqN2/FO5dQX1jLlacLX48JoPpwsrj1vy/pS8adjrHf\njEZYRq0ACroHABRXBctmODQe0iKNDV+vJ/b3z73SMv3SErweTh88D0eMHk+9L1aN\n0ByH31p0/fm5LKdJ1+dgWpmkWfrsUjOd+FO8DvkCgYA8fLXWYkknSfZQ1kNBxpxm\nhu37MqVcKRXqLkkYAc+EvUvAvcZEv0uOH2cFRD0xKkayC+zfka6GZKzyQkGVFZ0B\ndbx+P1DaJXEYDfgMRyNjgeQnuOMwpF3yxK1/a82NQp+U8yokUAhrMx+MU2lV63kU\n4pwP8a7c+qJt6RzBWGN9Gg==\n-----END PRIVATE KEY-----\n"
+        client_email: dbt-578@ra-development.iam.gserviceaccount.com
+        client_id: 100669809469159724177
+        auth_uri: https://accounts.google.com/o/oauth2/auth
+        token_uri: https://oauth2.googleapis.com/token
+        auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+        client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/dbt-578%40ra-development.iam.gserviceaccount.com
+

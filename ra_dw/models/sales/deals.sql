@@ -19,34 +19,34 @@ FROM
           properties.hs_lastmodifieddate.value AS lastmodifieddate,
           properties.notes_last_updated.value AS notes_last_updated,
           CASE WHEN properties.dealstage.value = '7a1f6388-75b5-479c-99cb-da3479c12629' THEN 'Sales Opportunity Identified'
-               WHEN properties.dealstage.value = '553a886b-24bc-4ec4-bca3-b1b7fcd9e1c7' THEN 'Sales Closed Subject to Contract'
+               WHEN properties.dealstage.value = '553a886b-24bc-4ec4-bca3-b1b7fcd9e1c7' THEN 'Deal Verbally Closed subject to SoW + MSA'
                WHEN properties.dealstage.value = '7c41062e-06c6-4a4a-87eb-de503061b23c' THEN 'Sales Closed Won and Delivered'
-               WHEN properties.dealstage.value = 'presentationscheduled' THEN 'Sales Presentation Scheduled'
-               WHEN properties.dealstage.value = 'appointmentscheduled' THEN 'Sales Appointment Scheduled'
-               WHEN properties.dealstage.value = 'qualifiedtobuy' THEN 'Sales Qualified to Buy'
-               WHEN properties.dealstage.value = 'contractsent' THEN 'Sales Contract Sent'
-               WHEN properties.dealstage.value = 'closedwon' THEN 'Sales Closed Won'
+               WHEN properties.dealstage.value = 'presentationscheduled' THEN 'Proposal Sent'
+               WHEN properties.dealstage.value = 'appointmentscheduled' THEN 'Initial Inbound Enquiry'
+               WHEN properties.dealstage.value = 'qualifiedtobuy' THEN 'Initial Meeting & Presentation'
+               WHEN properties.dealstage.value = 'contractsent' THEN 'SoW and MSA Sent or awaiting'
+               WHEN properties.dealstage.value = 'closedwon' THEN 'Closed Won and Awaiting Delivery'
                WHEN properties.dealstage.value = 'closedlost' THEN 'Sales Closed Lost'
                ELSE properties.dealstage.value
                END AS dealstage,
-         CASE WHEN properties.dealstage.value = '7a1f6388-75b5-479c-99cb-da3479c12629' THEN 1
-               WHEN properties.dealstage.value = '553a886b-24bc-4ec4-bca3-b1b7fcd9e1c7' THEN 6
-               WHEN properties.dealstage.value = '7c41062e-06c6-4a4a-87eb-de503061b23c' THEN 9
-               WHEN properties.dealstage.value = 'presentationscheduled' THEN 4
-               WHEN properties.dealstage.value = 'appointmentscheduled' THEN 3
+         CASE WHEN properties.dealstage.value = '7a1f6388-75b5-479c-99cb-da3479c12629' THEN 0
+               WHEN properties.dealstage.value = '553a886b-24bc-4ec4-bca3-b1b7fcd9e1c7' THEN 4
+               WHEN properties.dealstage.value = '7c41062e-06c6-4a4a-87eb-de503061b23c' THEN 8
+               WHEN properties.dealstage.value = 'presentationscheduled' THEN 3
+               WHEN properties.dealstage.value = 'appointmentscheduled' THEN 1
                WHEN properties.dealstage.value = 'qualifiedtobuy' THEN 2
                WHEN properties.dealstage.value = 'contractsent' THEN 5
-               WHEN properties.dealstage.value = 'closedwon' THEN 8
+               WHEN properties.dealstage.value = 'closedwon' THEN 6
                WHEN properties.dealstage.value = 'closedlost' THEN 7
                END AS dealstage_sortindex,
           CASE WHEN properties.dealstage.value = '7a1f6388-75b5-479c-99cb-da3479c12629' THEN 10
-               WHEN properties.dealstage.value = '553a886b-24bc-4ec4-bca3-b1b7fcd9e1c7' THEN 60
+               WHEN properties.dealstage.value = '553a886b-24bc-4ec4-bca3-b1b7fcd9e1c7' THEN 80
                WHEN properties.dealstage.value = '7c41062e-06c6-4a4a-87eb-de503061b23c' THEN 100
                WHEN properties.dealstage.value = 'presentationscheduled' THEN 40
-               WHEN properties.dealstage.value = 'appointmentscheduled' THEN 30
-               WHEN properties.dealstage.value = 'qualifiedtobuy' THEN 20
-               WHEN properties.dealstage.value = 'contractsent' THEN 50
-               WHEN properties.dealstage.value = 'closedwon' THEN 80
+               WHEN properties.dealstage.value = 'appointmentscheduled' THEN 20
+               WHEN properties.dealstage.value = 'qualifiedtobuy' THEN 40
+               WHEN properties.dealstage.value = 'contractsent' THEN 90
+               WHEN properties.dealstage.value = 'closedwon' THEN 100
                WHEN properties.dealstage.value = 'closedlost' THEN 0
                END AS dealstage_pipeline_modifier,
           properties.pipeline.value AS pipeline,
