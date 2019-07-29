@@ -1,1 +1,1 @@
-select * from {{ source('stitch_jira', 'issues') }}
+select * from {{ source('jira', 'issues') }}
