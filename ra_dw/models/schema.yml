@@ -6,7 +6,7 @@ sources:
     schema: stitch_jira
     tables:
       - name: projects
-        identifier: project
+        identifier: projects
         loaded_at_field: _sdc_sequence
       - name: issues
         identifier: issues
