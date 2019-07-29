@@ -1,6 +1,16 @@
 version: 2
 
 sources:
+  - name: jira
+    database: ra-development
+    schema: stitch_jira
+    tables:
+      - name: projects
+        identifier: projects
+        loaded_at_field: _sdc_sequence
+      - name: issues
+        identifier: issues
+        loaded_at_field: _sdc_sequence
   - name: xero
     database: ra-development
     schema: xero
