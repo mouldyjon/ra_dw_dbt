@@ -30,6 +30,7 @@ FROM (
     fields.project.key as project_key,
     fields.summary,
     fields.lastviewed,
+    fields.updated
     _sdc_sequence,
     MAX(_sdc_sequence) OVER (PARTITION BY id ORDER BY _sdc_sequence RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS max_sdc_sequence
   FROM
