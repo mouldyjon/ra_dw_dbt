@@ -145,19 +145,125 @@ FROM
       HAVING
   	     (COALESCE(SUM(invoice_line_items.amount ), 0) < 0)
   UNION ALL
-      SELECT 
+      SELECT
               pageviews.timestamp AS event_ts,
               customer_master.customer_id  AS customer_id,
               customer_master.customer_name AS customer_name,
               pageviews.page_subcategory AS event_details,
               'Site Visited' AS event_type,
               sum(1) as event_value
-      FROM 
+      FROM
           {{ ref('customer_master') }}  AS customer_master
-     LEFT JOIN 
-          {{ ref('pageviews') }} AS pageviews 
+     LEFT JOIN
+          {{ ref('pageviews') }} AS pageviews
           ON customer_master.customer_name = pageviews.network
       {{ dbt_utils.group_by(n=5) }}
+  UNION ALL
+  SELECT
+  created AS event_ts,
+  customer_master.customer_id AS customer_id,
+  customer_master.customer_name AS customer_name,
+  summary AS event_details,
+  'Jira Issue Created' AS event_type,
+  1 AS event_value
+FROM
+  {{ ref('customer_master') }} AS customer_master
+LEFT JOIN
+  `ra-development.stitch_jira.project_mapping` AS mapping
+ON
+  customer_master.customer_name = mapping.customer_name
+LEFT JOIN
+  {{ ref('dev_projects') }} AS projects
+ON
+  mapping.string_field_0 = projects.name
+LEFT JOIN
+  {{ ref('dev_stories') }} AS stories
+ON
+  projects.id = stories.project_id
+WHERE
+  created IS NOT NULL
+  AND ifnull(issuetype_name,
+    'Story') = 'Story'
+UNION ALL
+SELECT
+  updated AS event_ts,
+  customer_master.customer_id AS customer_id,
+  customer_master.customer_name AS customer_name,
+  summary AS event_details,
+  'Jira Issue Closed' AS event_type,
+  1 AS event_value
+FROM
+  {{ ref('customer_master') }} AS customer_master
+LEFT JOIN
+  `ra-development.stitch_jira.project_mapping` AS mapping
+ON
+  customer_master.customer_name = mapping.customer_name
+LEFT JOIN
+  {{ ref('dev_projects') }} AS projects
+ON
+  mapping.string_field_0 = projects.name
+LEFT JOIN
+  {{ ref('dev_stories') }} AS stories
+ON
+  projects.id = stories.project_id
+WHERE
+  updated IS NOT NULL
+  AND ifnull(issuetype_name,
+    'Story') = 'Story'
+  AND statuscategory = 'Done'
+UNION ALL
+SELECT
+  created AS event_ts,
+  customer_master.customer_id AS customer_id,
+  customer_master.customer_name AS customer_name,
+  summary AS event_details,
+  'Jira Task Created' AS event_type,
+  1 AS event_value
+FROM
+  {{ ref('customer_master') }} AS customer_master
+LEFT JOIN
+  `ra-development.stitch_jira.project_mapping` AS mapping
+ON
+  customer_master.customer_name = mapping.customer_name
+LEFT JOIN
+  {{ ref('dev_projects') }} AS projects
+ON
+  mapping.string_field_0 = projects.name
+LEFT JOIN
+  {{ ref('dev_stories') }} AS stories
+ON
+  projects.id = stories.project_id
+WHERE
+  updated IS NOT NULL
+  AND ifnull(issuetype_name,
+    'Story') = 'Task'
+UNION ALL
+SELECT
+  updated AS event_ts,
+  customer_master.customer_id AS customer_id,
+  customer_master.customer_name AS customer_name,
+  summary AS event_details,
+  'Jira Task Closed' AS event_type,
+  1 AS event_value
+FROM
+  {{ ref('customer_master') }} AS customer_master
+LEFT JOIN
+  `ra-development.stitch_jira.project_mapping` AS mapping
+ON
+  customer_master.customer_name = mapping.customer_name
+LEFT JOIN
+  {{ ref('dev_projects') }} AS projects
+ON
+  mapping.string_field_0 = projects.name
+LEFT JOIN
+  {{ ref('dev_stories') }} AS stories
+ON
+  projects.id = stories.project_id
+WHERE
+  updated IS NOT NULL
+  AND ifnull(issuetype_name,
+    'Story') = 'Task'
+  AND statuscategory = 'Done'
   UNION ALL
       SELECT
           *
