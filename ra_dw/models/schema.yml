@@ -33,7 +33,7 @@ sources:
     database: ra-development
     schema: xero_reports
     tables:
-      - name: profit_and_loss
+      - name: profit_and_loss_export
   - name: hubspot
     database: ra-development
     schema: hubspot
