@@ -14,7 +14,7 @@ SELECT
     CONCAT('Customer ', CAST(ROW_NUMBER() OVER() AS string)) AS demo_company_name,
     CASE WHEN harvest_customer_id IS NOT null THEN true ELSE false END AS is_services_client,
     CASE WHEN hubspot_company_id IS NOT null THEN true ELSE false END AS is_crm_tracked_client,
-    CASE WHEN xero_is_supplier IS true THEN true ELSE false END AS is_supplier_company
+    CASE WHEN xero_is_supplier IS true THEN true ELSE false END AS is_supplier_company,
 *
 FROM
     (SELECT
@@ -53,7 +53,7 @@ FROM
             ROW_NUMBER() OVER (PARTITION BY LOWER(customer_name)) AS c_r
         FROM
             {{ ref('combined_raw_companies') }}
-        {{ dbt_utils.group_by(n=32) }}
+        {{ dbt_utils.group_by(n=30) }}
         ORDER BY
             1)
     WHERE
