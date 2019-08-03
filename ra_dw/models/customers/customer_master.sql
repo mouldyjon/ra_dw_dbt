@@ -53,7 +53,7 @@ FROM
             ROW_NUMBER() OVER (PARTITION BY LOWER(customer_name)) AS c_r
         FROM
             {{ ref('combined_raw_companies') }}
-        {{ dbt_utils.group_by(n=30) }}
+        {{ dbt_utils.group_by(n=29) }}
         ORDER BY
             1)
     WHERE
