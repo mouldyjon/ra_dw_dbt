@@ -11,6 +11,13 @@ sources:
       - name: issues
         identifier: issues
         loaded_at_field: _sdc_sequence
+  - name: zapier_events_staging
+    database: ra-development
+    schema: zapier_events_staging
+    tables:
+      - name: events
+        identifier: events
+        loaded_at_field: event_ts
   - name: xero
     database: ra-development
     schema: xero

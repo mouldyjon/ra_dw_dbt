@@ -23,8 +23,6 @@ FROM
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS first_invoice_day_ts,
       MAX(CASE WHEN event_type = 'Client Invoiced' THEN event_ts END)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS last_invoice_day_ts,
-      MAX(CASE WHEN event_type = 'Site Visited' THEN event_ts END)
-          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS last_site_visit_day_ts,
       MAX(CASE WHEN event_type = 'Incoming Email' THEN event_ts END)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS last_incoming_email_ts,
       MAX(CASE WHEN event_type = 'Outgoing Email' THEN event_ts END)
@@ -41,13 +39,7 @@ FROM
       MAX(CASE WHEN event_type = 'Billable Day' THEN true ELSE false END)
           {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS billable_client,
       MAX(CASE WHEN event_type LIKE '%Sales%' THEN true ELSE false END)
-          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS sales_prospect,
-      MAX(CASE WHEN event_type LIKE '%Site Visited%' THEN true ELSE false END)
-          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS site_visitor,
-      MAX(CASE WHEN event_details LIKE '%Blog%' THEN true ELSE false END)
-          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS blog_reader,
-      MAX(CASE WHEN event_type LIKE '%Podcast%' THEN true ELSE false END)
-          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS podcast_reader
+          {{ customer_window_over('customer_id', 'event_ts', 'ASC') }} AS sales_prospect
   FROM
   -- sales opportunity stages
       (SELECT
@@ -149,15 +141,43 @@ FROM
               pageviews.timestamp AS event_ts,
               customer_master.customer_id  AS customer_id,
               customer_master.customer_name AS customer_name,
-              pageviews.page_subcategory AS event_details,
-              'Site Visited' AS event_type,
+              pageviews.page_title AS event_details,
+              concat(pageviews.site,' site visit') AS event_type,
               sum(1) as event_value
       FROM
           {{ ref('customer_master') }}  AS customer_master
      LEFT JOIN
           {{ ref('pageviews') }} AS pageviews
-          ON customer_master.customer_name = pageviews.network
+          ON customer_master.customer_id = pageviews.customer_id
       {{ dbt_utils.group_by(n=5) }}
+  UNION ALL
+          SELECT
+                  event_ts,
+                  customer_master.customer_id  AS customer_id,
+                  customer_master.customer_name AS customer_name,
+                  concat(concat(client_slack_messages.communications_text,' from'),client_slack_messages.communications_from_firstname_lastname) AS event_details,
+                  'client_slack_message' AS event_type,
+                  sum(1) as event_value
+          FROM
+              {{ ref('customer_master') }}  AS customer_master
+         LEFT JOIN
+              {{ ref('client_slack_messages') }} AS client_slack_messages
+              ON customer_master.customer_id = client_slack_messages.customer_id
+          {{ dbt_utils.group_by(n=5) }}
+  UNION ALL
+          SELECT
+                  opportunity_dealstage_events.event_ts,
+                  customer_master.customer_id  AS customer_id,
+                  customer_master.customer_name AS customer_name,
+                  opportunity_dealstage_events.notes AS event_details,
+                  opportunity_dealstage_events.opportunity_stage as event_type,
+                  opportunity_dealstage_events.opportunity_value as event_value
+          FROM
+              {{ ref('customer_master') }}  AS customer_master
+         LEFT JOIN
+              {{ ref('opportunity_dealstage_events') }} AS opportunity_dealstage_events
+              ON customer_master.customer_id = opportunity_dealstage_events.customer_id
+          {{ dbt_utils.group_by(n=5) }}
   UNION ALL
   SELECT
   created AS event_ts,
