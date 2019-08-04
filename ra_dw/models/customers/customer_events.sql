@@ -138,7 +138,7 @@ FROM
   	     (COALESCE(SUM(invoice_line_items.amount ), 0) < 0)
   UNION ALL
       SELECT
-              pageviews.timestamp AS event_ts,
+              pageviews.ts AS event_ts,
               customer_master.customer_id  AS customer_id,
               customer_master.customer_name AS customer_name,
               pageviews.page_title AS event_details,
