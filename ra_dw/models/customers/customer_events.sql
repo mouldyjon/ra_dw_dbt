@@ -8,9 +8,7 @@ SELECT
     *,
     {{ dbt_utils.datediff('last_billable_day_ts', current_timestamp(), 'day')}} AS days_since_last_billable_day,
     {{ dbt_utils.datediff('last_incoming_email_ts', current_timestamp(), 'day')}} AS days_since_last_incoming_email,
-    {{ dbt_utils.datediff('last_outgoing_email_ts', current_timestamp(), 'day')}} AS days_since_last_outgoing_email,
-    {{ dbt_utils.datediff('last_site_visit_day_ts', current_timestamp(), 'month')}} AS months_since_last_site_visit_day,
-    {{ dbt_utils.datediff('last_site_visit_day_ts', current_timestamp(), 'week')}} AS weeks_since_last_site_visit_day
+    {{ dbt_utils.datediff('last_outgoing_email_ts', current_timestamp(), 'day')}} AS days_since_last_outgoing_email
 FROM
   (SELECT
       *,
