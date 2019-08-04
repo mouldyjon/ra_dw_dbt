@@ -171,7 +171,7 @@ FROM
                   customer_master.customer_name AS customer_name,
                   opportunity_dealstage_events.notes AS event_details,
                   opportunity_dealstage_events.opportunity_stage as event_type,
-                  sum(opportunity_dealstage_events.opportunity_value) as event_value
+                  sum(cast(opportunity_dealstage_events.opportunity_value as int64)) as event_value
           FROM
               {{ ref('customer_master') }}  AS customer_master
          LEFT JOIN
