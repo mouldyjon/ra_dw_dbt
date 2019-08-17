@@ -49,6 +49,7 @@ FROM
                WHEN properties.dealstage.value = 'closedwon' THEN 100
                WHEN properties.dealstage.value = 'closedlost' THEN 0
                END AS dealstage_pipeline_modifier,
+          properties.dealstage.value as deadstage_id,
           properties.pipeline.value AS pipeline,
           properties.dealtype.value AS dealtype,
           properties.closedate.value AS closedate,
