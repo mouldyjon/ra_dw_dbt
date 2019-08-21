@@ -152,7 +152,7 @@ FROM
       SELECT
       all_history.History_Created_Time AS event_ts,
       c.customer_id AS customer_id,
-      customer_master.customer_name AS customer_name,
+      c.customer_name AS customer_name,
       concat(concat(all_history.User_Name,': '),all_history.History_Source) as event_details,
       'looker_usage' AS event_type,
       SUM(all_history.History_Approximate_Web_Usage_in_Minutes ) AS event_value
