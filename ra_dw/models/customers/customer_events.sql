@@ -149,6 +149,21 @@ FROM
           ON customer_master.customer_id = pageviews.customer_id
       {{ dbt_utils.group_by(n=5) }}
   UNION ALL
+      SELECT
+      all_history.History_Created_Time AS event_ts,
+      c.customer_id AS customer_id,
+      customer_master.customer_name AS customer_name,
+      all_history.User_Name AS concat(concat(event_details,' '),all_history.History_Source) as event_details,
+      'looker_usage' AS event_type,
+      SUM(all_history.History_Approximate_Web_Usage_in_Minutes ) AS event_value
+    FROM
+      {{ ref('all_history') }} AS all_history
+    JOIN
+      {{ ref('customer_master') }} AS c
+    ON
+      all_history.site = c.customer_name
+    {{ dbt_utils.group_by(n=5) }}
+  UNION ALL
           SELECT
                   event_ts,
                   customer_master.customer_id  AS customer_id,

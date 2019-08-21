@@ -18,6 +18,13 @@ sources:
       - name: events
         identifier: events
         loaded_at_field: event_ts
+  - name: looker
+    database: ra-development
+    schema: client_looker_usage_stats
+    tables:
+      - name: all_history
+        identifier: all_history
+        loaded_at_field: History_Completed_Time
   - name: xero
     database: ra-development
     schema: xero
