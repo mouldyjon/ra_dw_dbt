@@ -150,12 +150,12 @@ FROM
       {{ dbt_utils.group_by(n=5) }}
   UNION ALL
       SELECT
-      all_history.History_Created_Time AS event_ts,
+      timestamp_trunc(History_Completed_Time,DAY) AS event_ts,
       c.customer_id AS customer_id,
       c.customer_name AS customer_name,
-      concat(concat(all_history.User_Name,': '),all_history.History_Source) as event_details,
-      'looker_usage' AS event_type,
-      SUM(all_history.History_Approximate_Web_Usage_in_Minutes ) AS event_value
+      all_history.User_Name as event_details,
+      'daily_looker_usage_mins' AS event_type,
+      SUM(all_history.History_Approximate_Web_Usage_in_Minutes )/60 AS event_value
     FROM
       {{ ref('all_history') }} AS all_history
     JOIN
