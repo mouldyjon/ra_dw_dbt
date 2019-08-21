@@ -16,7 +16,7 @@ FROM
           properties.closed_lost_reason.value AS closed_lost_reason,
           properties.dealname.value AS dealname,
           properties.hubspot_owner_id.value AS hubspot_owner_id,
-          properties.hubspot_owner_id.sourceid as hubspot_owner_email,
+          replace(properties.hubspot_owner_id.sourceid,'mjr-analytics.com','rittmananalytics.com') as hubspot_owner_email,
           properties.hs_lastmodifieddate.value AS lastmodifieddate,
           properties.notes_last_updated.value AS notes_last_updated,
           CASE WHEN properties.dealstage.value = '7a1f6388-75b5-479c-99cb-da3479c12629' THEN 'Sales Opportunity Identified'
