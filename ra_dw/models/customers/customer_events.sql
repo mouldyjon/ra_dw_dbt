@@ -180,7 +180,7 @@ FROM
                   event_ts,
                   customer_master.customer_id  AS customer_id,
                   customer_master.customer_name AS customer_name,
-                  client_slack_messages.communications_from_firstname_lastname as event_source
+                  client_slack_messages.communications_from_firstname_lastname as event_source,
                   client_slack_messages.communications_text AS event_details,
                   'client_slack_message' AS event_type,
                   sum(1) as event_value,
