@@ -8,7 +8,7 @@ SELECT
 FROM (
     SELECT
         *,
-        MAX(t._sdc_sequence) OVER (PARTITION BY id ORDER BY t._sdc_sequence RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS latest_sdc_sequence
+        MAX(_sdc_sequence) OVER (PARTITION BY id ORDER BY _sdc_sequence RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS latest_sdc_sequence
     FROM
         {{ ref('harvest_base_time_entries') }}
     ) t
