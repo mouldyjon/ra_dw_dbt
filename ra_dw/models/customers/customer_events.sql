@@ -47,7 +47,7 @@ FROM
   	      deals.dealname AS event_details,
   	      deals.dealstage AS event_type,
   	      AVG(deals.amount) AS event_value,
-          1 as event_units
+          sum(1) as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -112,7 +112,7 @@ FROM
   	      invoices.subject AS event_details,
           'Client Invoiced' AS event_type,
   	      SUM(invoices.amount) AS event_value,
-          1 as event_units
+          sum(1) as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -130,7 +130,7 @@ FROM
          invoice_line_items.description AS event_details,
          'Client Credited' AS event_type,
   	      COALESCE(SUM(invoice_line_items.amount ), 0) AS event_value,
-          1 as event_units
+          sum(1) as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -150,8 +150,8 @@ FROM
               pageviews.visitor_city as event_source,
               pageviews.page_title AS event_details,
               concat(pageviews.site,' site visit') AS event_type,
-              null as event_value,
-              1 as event_units
+              sum(1) as event_value,
+              sum(1) as event_units
       FROM
           {{ ref('customer_master') }}  AS customer_master
      LEFT JOIN
@@ -167,7 +167,7 @@ FROM
       all_history.dashboard_title as event_details,
       'daily_looker_usage_mins' AS event_type,
       SUM(all_history.History_Approximate_Web_Usage_in_Minutes )/60 AS event_value,
-      1 as event_units
+      sum(1) as event_units
     FROM
       {{ ref('all_history') }} AS all_history
     JOIN
@@ -184,7 +184,7 @@ FROM
                   client_slack_messages.communications_text AS event_details,
                   'client_slack_message' AS event_type,
                   sum(1) as event_value,
-                  1 as event_units
+                  sum(1) as event_units
           FROM
               {{ ref('customer_master') }}  AS customer_master
          LEFT JOIN
@@ -333,7 +333,7 @@ WHERE
               invoices.subject AS event_details,
               CASE WHEN invoices.paid_at <= invoices.due_date THEN 'Client Paid' ELSE 'Client Paid Late' END AS event_type,
   	          SUM(invoices.amount) AS event_value,
-              1 as event_units
+              sum(1) as event_units
           FROM
               {{ ref('customer_master') }} AS customer_master
           LEFT JOIN {{ ref('harvest_invoices') }}  AS invoices
