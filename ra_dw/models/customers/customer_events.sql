@@ -46,7 +46,8 @@ FROM
           customer_master.customer_name AS customer_name,
   	      deals.dealname AS event_details,
   	      deals.dealstage AS event_type,
-  	      AVG(deals.amount) AS event_value
+  	      AVG(deals.amount) AS event_value,
+          1 as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -64,9 +65,11 @@ FROM
         	time_entries.spent_date AS event_ts,
         	customer_master.customer_id AS customer_id,
           customer_master.customer_name AS customer_name,
+          time_entries.consultant_firstname_lastname as event_source,
   	      projects.name AS event_details,
   	      CASE WHEN time_entries.billable THEN 'Billable Day' ELSE 'Non-Billable Day' END AS event_type,
-  	      time_entries.hours * time_entries.billable_rate AS event_value
+  	      time_entries.billable_rate AS event_value,
+          time_entries.hours/8 as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -84,12 +87,14 @@ FROM
         	communications.communication_timestamp AS event_ts,
         	customer_master.customer_id AS customer_id,
           customer_master.customer_name AS customer_name,
+          communications.communications_from_firstname_lastname as event_source,
           communications.communications_subject AS event_details,
           CASE WHEN communications.communication_type = 'INCOMING_EMAIL' THEN 'Incoming Email'
                WHEN communications.communication_type = 'EMAIL' THEN 'Outgoing Email'
                ELSE communications.communications_subject
           END AS event_type,
-          1 AS event_value
+          1 AS event_value,
+          1 as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -99,14 +104,15 @@ FROM
           communications.communication_timestamp IS NOT null
       {{ dbt_utils.group_by(n=5) }}
   UNION ALL
-  -- sales opportunity stages
       SELECT
         	invoices.issue_date AS event_ts,
         	customer_master.customer_id AS customer_id,
           customer_master.customer_name AS customer_name,
+          null as event_source,
   	      invoices.subject AS event_details,
           'Client Invoiced' AS event_type,
-  	      SUM(invoices.amount) AS event_value
+  	      SUM(invoices.amount) AS event_value,
+          1 as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -120,9 +126,11 @@ FROM
   	     invoices.issue_date AS event_ts,
   	     customer_master.customer_id AS customer_id,
          customer_master.customer_name AS customer_name,
+         null as event_source,
          invoice_line_items.description AS event_details,
          'Client Credited' AS event_type,
-  	      COALESCE(SUM(invoice_line_items.amount ), 0) AS event_value
+  	      COALESCE(SUM(invoice_line_items.amount ), 0) AS event_value,
+          1 as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
@@ -139,9 +147,11 @@ FROM
               pageviews.event_ts AS event_ts,
               customer_master.customer_id  AS customer_id,
               customer_master.customer_name AS customer_name,
+              pageviews.visitor_city as event_source,
               pageviews.page_title AS event_details,
               concat(pageviews.site,' site visit') AS event_type,
-              sum(1) as event_value
+              null as event_value,
+              1 as event_units
       FROM
           {{ ref('customer_master') }}  AS customer_master
      LEFT JOIN
@@ -153,9 +163,11 @@ FROM
       timestamp_trunc(History_Completed_Time,DAY) AS event_ts,
       c.customer_id AS customer_id,
       c.customer_name AS customer_name,
-      all_history.User_Name as event_details,
+      all_history.User_Name as event_source,
+      all_history.dashboard_title as event_details,
       'daily_looker_usage_mins' AS event_type,
-      SUM(all_history.History_Approximate_Web_Usage_in_Minutes )/60 AS event_value
+      SUM(all_history.History_Approximate_Web_Usage_in_Minutes )/60 AS event_value,
+      1 as event_units
     FROM
       {{ ref('all_history') }} AS all_history
     JOIN
@@ -168,9 +180,11 @@ FROM
                   event_ts,
                   customer_master.customer_id  AS customer_id,
                   customer_master.customer_name AS customer_name,
-                  concat(concat(client_slack_messages.communications_text,' from'),client_slack_messages.communications_from_firstname_lastname) AS event_details,
+                  client_slack_messages.communications_from_firstname_lastname as event_source
+                  client_slack_messages.communications_text AS event_details,
                   'client_slack_message' AS event_type,
-                  sum(1) as event_value
+                  sum(1) as event_value,
+                  1 as event_units
           FROM
               {{ ref('customer_master') }}  AS customer_master
          LEFT JOIN
@@ -182,9 +196,11 @@ FROM
                   opportunity_dealstage_events.event_ts,
                   customer_master.customer_id  AS customer_id,
                   customer_master.customer_name AS customer_name,
+                  stories.displayname as event_source,
                   opportunity_dealstage_events.notes AS event_details,
                   opportunity_dealstage_events.opportunity_stage as event_type,
-                  sum(cast(opportunity_dealstage_events.opportunity_value as int64)) as event_value
+                  sum(cast(opportunity_dealstage_events.opportunity_value as int64)) as event_value,
+                  1 as event_units
           FROM
               {{ ref('customer_master') }}  AS customer_master
          LEFT JOIN
@@ -195,10 +211,12 @@ FROM
   SELECT
   created AS event_ts,
   customer_master.customer_id AS customer_id,
-  customer_master.customer_name AS customer_name,
+  customer_master.customer_name AS customer_name,,
+  stories.displayname as event_source,
   summary AS event_details,
   'Jira Issue Created' AS event_type,
-  1 AS event_value
+  1 AS event_value,
+  1 as event_units
 FROM
   {{ ref('customer_master') }} AS customer_master
 LEFT JOIN
@@ -222,9 +240,11 @@ SELECT
   updated AS event_ts,
   customer_master.customer_id AS customer_id,
   customer_master.customer_name AS customer_name,
+  stories.displayname as event_source,
   summary AS event_details,
   'Jira Issue Closed' AS event_type,
-  1 AS event_value
+  1 AS event_value,
+  1 as event_units
 FROM
   {{ ref('customer_master') }} AS customer_master
 LEFT JOIN
@@ -249,9 +269,11 @@ SELECT
   created AS event_ts,
   customer_master.customer_id AS customer_id,
   customer_master.customer_name AS customer_name,
+  stories.displayname as event_source,
   summary AS event_details,
   'Jira Task Created' AS event_type,
-  1 AS event_value
+  1 AS event_value,
+  1 as event_units
 FROM
   {{ ref('customer_master') }} AS customer_master
 LEFT JOIN
@@ -275,9 +297,11 @@ SELECT
   updated AS event_ts,
   customer_master.customer_id AS customer_id,
   customer_master.customer_name AS customer_name,
+  stories.displayname as event_source,
   summary AS event_details,
   'Jira Task Closed' AS event_type,
-  1 AS event_value
+  1 AS event_value,
+  1 as event_units
 FROM
   {{ ref('customer_master') }} AS customer_master
 LEFT JOIN
@@ -305,9 +329,11 @@ WHERE
               invoices.paid_at AS event_ts,
   	      customer_master.customer_id AS customer_id,
               customer_master.customer_name AS customer_name,
+              null as event_source,
               invoices.subject AS event_details,
               CASE WHEN invoices.paid_at <= invoices.due_date THEN 'Client Paid' ELSE 'Client Paid Late' END AS event_type,
-  	          SUM(invoices.amount) AS event_value
+  	          SUM(invoices.amount) AS event_value,
+              1 as event_units
           FROM
               {{ ref('customer_master') }} AS customer_master
           LEFT JOIN {{ ref('harvest_invoices') }}  AS invoices

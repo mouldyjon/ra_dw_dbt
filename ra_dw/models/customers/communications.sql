@@ -18,7 +18,6 @@ SELECT
     metadata.text AS communications_text,
     metadata.subject AS communications_subject,
     CONCAT(CONCAT(metadata.from.firstname,' '), metadata.from.lastname) AS communications_from_firstname_lastname,
-    CONCAT(CONCAT(metadata.to.firstname,' '), metadata.to.lastname) AS communications_to_firstname_lastname,
     metadata.status AS communications_status,
     metadatacc.email AS communications_cc_email
 FROM
