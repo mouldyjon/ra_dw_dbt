@@ -211,7 +211,7 @@ FROM
   SELECT
   created AS event_ts,
   customer_master.customer_id AS customer_id,
-  customer_master.customer_name AS customer_name,,
+  customer_master.customer_name AS customer_name,
   stories.displayname as event_source,
   summary AS event_details,
   'Jira Issue Created' AS event_type,
