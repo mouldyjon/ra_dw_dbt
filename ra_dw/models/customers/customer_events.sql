@@ -44,6 +44,7 @@ FROM
   		    deals.lastmodifieddate AS event_ts,
           customer_master.customer_id AS customer_id,
           customer_master.customer_name AS customer_name,
+          concat(concat(owners.firstname,' '),owners.lastname) as event_source,
   	      deals.dealname AS event_details,
   	      deals.dealstage AS event_type,
   	      AVG(deals.amount) AS event_value,
