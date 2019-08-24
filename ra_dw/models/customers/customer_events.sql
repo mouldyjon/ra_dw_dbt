@@ -59,7 +59,7 @@ FROM
           ON deals.hubspot_owner_id = CAST(owners.ownerid AS STRING)
       WHERE
           deals.lastmodifieddate IS NOT null
-      {{ dbt_utils.group_by(n=5) }}
+      {{ dbt_utils.group_by(n=6) }}
       UNION ALL
   -- consulting days
       SELECT
