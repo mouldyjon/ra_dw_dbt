@@ -80,7 +80,7 @@ FROM
           ON time_entries.project_id = projects.id
       WHERE
           time_entries.spent_date IS NOT null
-      {{ dbt_utils.group_by(n=6) }}
+      {{ dbt_utils.group_by(n=8) }}
   UNION ALL
   -- incoming and outgoing emails
       SELECT
@@ -102,7 +102,7 @@ FROM
           ON customer_master.hubspot_company_id = communications.hubspot_company_id
       WHERE
           communications.communication_timestamp IS NOT null
-      {{ dbt_utils.group_by(n=5) }}
+      {{ dbt_utils.group_by(n=8) }}
   UNION ALL
       SELECT
         	invoices.issue_date AS event_ts,
@@ -120,7 +120,7 @@ FROM
           ON customer_master.harvest_customer_id = invoices.client_id
       WHERE
           invoices.issue_date IS NOT null
-      {{ dbt_utils.group_by(n=5) }}
+      {{ dbt_utils.group_by(n=6) }}
   UNION ALL
       SELECT
   	     invoices.issue_date AS event_ts,
@@ -139,7 +139,7 @@ FROM
       LEFT JOIN
           {{ ref('harvest_invoice_line_items') }} AS invoice_line_items
           ON invoices.id = invoice_line_items.invoice_id
-      {{ dbt_utils.group_by(n=5) }}
+      {{ dbt_utils.group_by(n=6) }}
       HAVING
   	     (COALESCE(SUM(invoice_line_items.amount ), 0) < 0)
   UNION ALL
@@ -157,7 +157,7 @@ FROM
      LEFT JOIN
           {{ ref('pageviews') }} AS pageviews
           ON customer_master.customer_id = pageviews.customer_id
-      {{ dbt_utils.group_by(n=5) }}
+      {{ dbt_utils.group_by(n=6) }}
   UNION ALL
       SELECT
       timestamp_trunc(History_Completed_Time,DAY) AS event_ts,
@@ -174,7 +174,7 @@ FROM
       {{ ref('customer_master') }} AS c
     ON
       all_history.site = c.customer_name
-    {{ dbt_utils.group_by(n=5) }}
+    {{ dbt_utils.group_by(n=6) }}
   UNION ALL
           SELECT
                   event_ts,
@@ -190,7 +190,7 @@ FROM
          LEFT JOIN
               {{ ref('client_slack_messages') }} AS client_slack_messages
               ON customer_master.customer_id = client_slack_messages.customer_id
-          {{ dbt_utils.group_by(n=5) }}
+          {{ dbt_utils.group_by(n=6) }}
   UNION ALL
           SELECT
                   opportunity_dealstage_events.event_ts,
@@ -200,13 +200,13 @@ FROM
                   opportunity_dealstage_events.notes AS event_details,
                   opportunity_dealstage_events.opportunity_stage as event_type,
                   sum(cast(opportunity_dealstage_events.opportunity_value as int64)) as event_value,
-                  1 as event_units
+                  sum(1) as event_units
           FROM
               {{ ref('customer_master') }}  AS customer_master
          LEFT JOIN
               {{ ref('opportunity_dealstage_events') }} AS opportunity_dealstage_events
               ON customer_master.customer_id = opportunity_dealstage_events.customer_id
-          {{ dbt_utils.group_by(n=5) }}
+          {{ dbt_utils.group_by(n=6) }}
   UNION ALL
   SELECT
   created AS event_ts,
@@ -340,7 +340,7 @@ WHERE
               ON customer_master.harvest_customer_id = invoices.client_id
           WHERE
             invoices.paid_at IS NOT null
-          {{ dbt_utils.group_by(n=5) }}
+          {{ dbt_utils.group_by(n=6) }}
           )
       )
   WHERE
