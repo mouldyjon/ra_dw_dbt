@@ -197,7 +197,7 @@ FROM
                   opportunity_dealstage_events.event_ts,
                   customer_master.customer_id  AS customer_id,
                   customer_master.customer_name AS customer_name,
-                  stories.displayname as event_source,
+                  null as event_source,
                   opportunity_dealstage_events.notes AS event_details,
                   opportunity_dealstage_events.opportunity_stage as event_type,
                   sum(cast(opportunity_dealstage_events.opportunity_value as int64)) as event_value,
