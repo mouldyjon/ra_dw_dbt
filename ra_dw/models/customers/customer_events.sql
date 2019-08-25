@@ -215,7 +215,7 @@ FROM
   customer_master.customer_name AS customer_name,
   stories.displayname as event_source,
   summary AS event_details,
-  'Jira Issue Created' AS event_type,
+  'Jira User Story Created' AS event_type,
   1 AS event_value,
   1 as event_units
 FROM
@@ -243,7 +243,7 @@ SELECT
   customer_master.customer_name AS customer_name,
   stories.displayname as event_source,
   summary AS event_details,
-  'Jira Issue Closed' AS event_type,
+  'Jira User Story Closed' AS event_type,
   1 AS event_value,
   1 as event_units
 FROM
