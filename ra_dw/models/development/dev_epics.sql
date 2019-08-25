@@ -6,6 +6,6 @@
 SELECT
   *
 FROM
-    {{ ref('dev_issues') }})
+    {{ ref('dev_issues') }}
 WHERE
   issuetype_name = 'Epic'
