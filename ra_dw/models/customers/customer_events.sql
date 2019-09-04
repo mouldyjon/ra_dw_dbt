@@ -69,7 +69,7 @@ FROM
           time_entries.consultant_firstname_lastname as event_source,
   	      projects.name AS event_details,
   	      CASE WHEN time_entries.billable THEN 'Billable Day' ELSE 'Non-Billable Day' END AS event_type,
-  	      time_entries.billable_rate AS event_value,
+  	      time_entries.billable_rate*8 AS event_value,
           time_entries.hours/8 as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
