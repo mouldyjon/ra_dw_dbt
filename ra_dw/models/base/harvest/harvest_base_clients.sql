@@ -1,3 +1,1 @@
-Shift id 72865
-
-Nurse 14485
+select * from {{ source('harvest', 'clients') }}
