@@ -1,1 +1,3 @@
-select * from {{ source('harvest', 'clients') }}
+Shift id 72865
+
+Nurse 14485
