@@ -16,4 +16,4 @@ JOIN {{ ref('harvest_users') }} u
     ON t.user_id = u.id
 WHERE
     t._sdc_sequence = t.latest_sdc_sequence
-{{ dbt_utils.group_by(n=29) }}
+{{ dbt_utils.group_by(n=30) }}
