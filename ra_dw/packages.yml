@@ -1,5 +1,9 @@
 packages:
-  - git: "https://github.com/fishtown-analytics/dbt-utils.git"
-    revision: 0.1.22
-    # Consult the releases for information about the latest release.
-    # https://github.com/fishtown-analytics/dbt-utils/releases
+  - package: fishtown-analytics/dbt_utils
+    version: 0.2.4
+  - package: fishtown-analytics/segment
+    version: 0.2.4
+  - package: fishtown-analytics/stitch_utils
+    version: 0.1.6
+  - package: fishtown-analytics/codegen
+    version: 0.0.4
