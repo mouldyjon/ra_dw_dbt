@@ -36,6 +36,14 @@ sources:
         loaded_at_field: _sdc_sequence
       - name: bank_transactions
         loaded_at_field: _sdc_sequence
+  - name: segment
+    database: ra-development
+    schema: company_website
+    tables:
+    tables:
+      - name: pages
+        identifier: pages
+        loaded_at_field: loaded_at
   - name: fivetran_mailchimp
     database: ra-development
     schema: mailchimp
