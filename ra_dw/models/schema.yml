@@ -61,22 +61,16 @@ sources:
     schema: hubspot
     tables:
       - name: companies
-
         loaded_at_field: _sdc_sequence
       - name: contacts
-
         loaded_at_field: _sdc_sequence
       - name: deal_pipelines
-
         loaded_at_field: _sdc_sequence
       - name: deals
-
         loaded_at_field: _sdc_sequence
       - name: engagements
-
         loaded_at_field: _sdc_sequence
       - name: owners
-
         loaded_at_field: _sdc_sequence
   - name: harvest_forecast
     database: ra-development

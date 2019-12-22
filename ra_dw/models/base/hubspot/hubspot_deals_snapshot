@@ -1,0 +1,1 @@
+select * from {{ source('snapshots', 'deals_snapshot_timestamp') }}
