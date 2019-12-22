@@ -1,1 +1,0 @@
-select * from {{ source('harvest_forecast', 'people') }}
