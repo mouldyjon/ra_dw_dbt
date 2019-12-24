@@ -6,6 +6,6 @@
 SELECT
   *
 FROM
-    {{ ref('dev_issues') }}
+    {{ ref('jira_issues') }}
 WHERE
-  issuetype_name = 'Subtask'
+  issuetype_name = 'Task'

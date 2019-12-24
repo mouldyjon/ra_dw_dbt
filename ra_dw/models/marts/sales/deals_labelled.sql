@@ -26,17 +26,7 @@ pipelines as (
     s.*,
     p.pipeline_label,
     p.pipeline_displayorder,
-    p.pipeline_active,
-    timestamp_diff(current_timestamp,start_date_ts,DAY) as days_until_end,
-    timestamp(date_add(date(d.start_date_ts), interval safe_cast(d.duration_months as int64) month)) as end_date_ts,
-    case when (s.stage_label in ('Approved to Start (At Risk)','Won (Contract Signed)')
-    and timestamp_diff(current_timestamp,start_date_ts,DAY) < 365/2)
-    or
-      (s.stage_label in ('Approved to Start (At Risk)','Won (Contract Signed)')
-       and
-       d.start_date_ts < current_timestamp
-       and date_add(date(d.start_date_ts), interval safe_cast(d.duration_months as int64) month) > current_date)
-      then true else false end as is_active
+    p.pipeline_active
 
 
     from deals d

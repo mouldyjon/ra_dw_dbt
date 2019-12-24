@@ -19,6 +19,7 @@
       created_at AS harvest_customer_created_at,
       currency AS harvest_customer_currency,
       is_active AS harvest_customer_is_active,
+      _sdc_batched_at,
            MAX(_sdc_batched_at) OVER (PARTITION BY id ORDER BY _sdc_batched_at RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS latest_sdc_batched_at
 
       FROM

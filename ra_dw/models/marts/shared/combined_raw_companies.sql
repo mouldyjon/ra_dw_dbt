@@ -8,7 +8,7 @@ SELECT
     hrv.*,
     xer.*
 FROM
-    {{ ref('hubspot_companies') }} hub
+    {{ ref('companies') }} hub
 FULL OUTER JOIN
     {{ ref('harvest_customers') }} hrv
     ON LOWER(hub.hubspot_company_name) = LOWER(hrv.harvest_customer_name)

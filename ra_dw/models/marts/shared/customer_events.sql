@@ -55,7 +55,7 @@ FROM
           {{ ref('deals') }} AS deals
           ON customer_master.hubspot_company_id = deals.associatedcompanyids
       LEFT JOIN
-          {{ ref('hubspot_owners') }} AS owners
+          {{ ref('owners') }} AS owners
           ON deals.hubspot_owner_id = CAST(owners.ownerid AS STRING)
       WHERE
           deals.lastmodifieddate IS NOT null
@@ -225,11 +225,11 @@ LEFT JOIN
 ON
   customer_master.customer_name = mapping.customer_name
 LEFT JOIN
-  {{ ref('dev_projects') }} AS projects
+  {{ ref('jira_projects') }} AS projects
 ON
   mapping.string_field_0 = projects.name
 LEFT JOIN
-  {{ ref('dev_stories') }} AS stories
+  {{ ref('jira_stories') }} AS stories
 ON
   projects.id = stories.project_id
 WHERE
@@ -253,11 +253,11 @@ LEFT JOIN
 ON
   customer_master.customer_name = mapping.customer_name
 LEFT JOIN
-  {{ ref('dev_projects') }} AS projects
+  {{ ref('jira_projects') }} AS projects
 ON
   mapping.string_field_0 = projects.name
 LEFT JOIN
-  {{ ref('dev_stories') }} AS stories
+  {{ ref('jira_stories') }} AS stories
 ON
   projects.id = stories.project_id
 WHERE
@@ -282,11 +282,11 @@ LEFT JOIN
 ON
   customer_master.customer_name = mapping.customer_name
 LEFT JOIN
-  {{ ref('dev_projects') }} AS projects
+  {{ ref('jira_projects') }} AS projects
 ON
   mapping.string_field_0 = projects.name
 LEFT JOIN
-  {{ ref('dev_stories') }} AS stories
+  {{ ref('jira_stories') }} AS stories
 ON
   projects.id = stories.project_id
 WHERE
@@ -310,11 +310,11 @@ LEFT JOIN
 ON
   customer_master.customer_name = mapping.customer_name
 LEFT JOIN
-  {{ ref('dev_projects') }} AS projects
+  {{ ref('jira_projects') }} AS projects
 ON
   mapping.string_field_0 = projects.name
 LEFT JOIN
-  {{ ref('dev_stories') }} AS stories
+  {{ ref('jira_stories') }} AS stories
 ON
   projects.id = stories.project_id
 WHERE

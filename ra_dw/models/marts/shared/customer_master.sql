@@ -37,7 +37,6 @@ FROM
             hubspot_country,
             hubspot_total_money_raised,
             hubspot_city,
-            hubspot_total_revenue,
             hubspot_annual_revenue,
             hubspot_website,
             hubspot_owner_id,
@@ -46,14 +45,13 @@ FROM
             hubspot_is_public,
             hubspot_domain as web_domain,
             hubspot_created_date,
-            hubspot_type,
             hubspot_state,
             hubspot_lifecycle_stage,
             hubspot_description,
             ROW_NUMBER() OVER (PARTITION BY LOWER(customer_name)) AS c_r
         FROM
             {{ ref('combined_raw_companies') }}
-        {{ dbt_utils.group_by(n=29) }}
+        {{ dbt_utils.group_by(n=27) }}
         ORDER BY
             1)
     WHERE
@@ -81,7 +79,6 @@ SELECT
   null as hubspot_country,
   null as hubspot_total_money_raised,
   null as hubspot_city,
-  null as hubspot_total_revenue,
   null as hubspot_annual_revenue,
   null as hubspot_website,
   null as hubspot_owner_id,
@@ -90,7 +87,6 @@ SELECT
   null as hubspot_is_public,
   null as web_domain,
   null as hubspot_created_date,
-  null as hubspot_type,
   null as hubspot_state,
   null as hubspot_lifecycle_stage,
   null as hubspot_description,

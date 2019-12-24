@@ -29,7 +29,6 @@ select_contacts as (
       properties.state.value state,
       properties.zip.value zip,
       properties.mobilephone.value mobilephone,
-      properties.name.value name,
       canonical_vid,
       profile_url,
       is_contact,

@@ -1,10 +1,18 @@
-{{
-    config(
-        materialized='table'
-    )
-}}
+/*
+  This snapshot table will live in:
+    analytics.snapshots.orders_snapshot
+*/
 
+{% snapshot deals_snapshot %}
 
+    {{
+        config(
+          target_schema='snapshots',
+          strategy='timestamp',
+          unique_key='deal_id',
+          updated_at='_sdc_batched_at',
+        )
+    }}
 
 with deals as (
 
@@ -52,16 +60,15 @@ new_deal as (
       properties.num_notes.value AS num_notes,
       properties.description.value AS description,
       properties.dealstage.source as source, -- added 06/11/1
-      properties.dealstage.sourceid as salesperson_email, -- added 06/11/2019
-      properties.hs_is_closed.value AS is_closed, -- added 18/12/2019
-      properties.pricing_model.value AS pricing_model, -- added 18/12/2019
-      associations.associatedcompanyids[offset(off)] as associatedcompanyids, -- added 18/12/2019
+      properties.dealstage.sourceid as salesperson_email,
+      associations.associatedcompanyids as associatedcompanyids, -- added 06/11/2019
       dealid AS deal_id,
       _sdc_batched_at
 
-    from latest_version,
-              unnest(associations.associatedcompanyids) with offset off
+    from latest_version
 
 )
 
 select * from new_deal
+
+{% endsnapshot %}
