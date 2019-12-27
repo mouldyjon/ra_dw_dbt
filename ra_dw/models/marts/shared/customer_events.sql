@@ -62,27 +62,27 @@ FROM
       {{ dbt_utils.group_by(n=6) }}
       UNION ALL
   -- consulting days
-      SELECT
-        	time_entries.spent_date AS event_ts,
-        	customer_master.customer_id AS customer_id,
-          customer_master.customer_name AS customer_name,
-          time_entries.consultant_firstname_lastname as event_source,
-  	      projects.name AS event_details,
-  	      CASE WHEN time_entries.billable THEN 'Billable Day' ELSE 'Non-Billable Day' END AS event_type,
-  	      time_entries.billable_rate*8 AS event_value,
-          time_entries.hours/8 as event_units
-      FROM
-          {{ ref('customer_master') }} AS customer_master
-      LEFT JOIN
-          {{ ref('harvest_projects') }} AS projects
-          ON customer_master.harvest_customer_id = projects.client_id
-      LEFT JOIN
-          {{ ref('harvest_time_entries') }} AS time_entries
-          ON time_entries.project_id = projects.id
-      WHERE
-          time_entries.spent_date IS NOT null
-      {{ dbt_utils.group_by(n=8) }}
-  UNION ALL
+  --    SELECT
+  --      	time_entries.spent_date AS event_ts,
+  --      	customer_master.customer_id AS customer_id,
+  --          customer_master.customer_name AS customer_name,
+  --        time_entries.consultant_firstname_lastname as event_source,
+  --	      projects.name AS event_details,
+  --	      CASE WHEN time_entries.billable THEN 'Billable Day' ELSE 'Non-Billable Day' END AS event_type,
+  --	      time_entries.billable_rate*8 AS event_value,
+  --        time_entries.hours/8 as event_units
+  --    FROM
+  --        {{ ref('customer_master') }} AS customer_master
+  --    LEFT JOIN
+  --        {{ ref('harvest_projects') }} AS projects
+  --        ON customer_master.harvest_customer_id = projects.client_id
+  --    LEFT JOIN
+  --        {{ ref('harvest_time_entries') }} AS time_entries
+  --        ON time_entries.project_id = projects.id
+  --    WHERE
+  --        time_entries.spent_date IS NOT null
+  --    {{ dbt_utils.group_by(n=8) }}
+  -- UNION ALL
   -- incoming and outgoing emails
       SELECT
         	communications.communication_timestamp AS event_ts,
