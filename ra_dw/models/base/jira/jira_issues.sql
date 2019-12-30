@@ -41,8 +41,11 @@ FROM (
     case when fields.issuetype.name = 'Support' then 1 else 0 end as count_support_tickets,
     case when fields.project.projecttypekey = 'software' then 'Jira' else 'Jira Service Desk' end as service_category,
     case when fields.project.name like '%Florence%' then 'Florence'
-         when fields.project.name like '%11:FS%' then '11:FS'
+         when fields.project.name like '%Colourpop%' then 'Colourpop'
          when upper(fields.project.name) like '%INTO%' then 'INTO University Partnerships'
+         when fields.project.name like '%Funda%' then 'funda'
+         when fields.project.name like '%Resolver%' then 'Resolving Group Ltd'
+         when fields.project.name like 'LiveBetterWith' then 'Live Better With Ltd'
          else fields.project.name end as project_grouping,
     case when fields.status.statuscategory.name = 'Done' then true else false end as issue_completed,
     case when fields.status.statuscategory.name = 'Done' then timestamp_diff(timestamp(substr(fields.statuscategorychangedate,1,23)),fields.created,HOUR) end as issue_hours_to_complete,

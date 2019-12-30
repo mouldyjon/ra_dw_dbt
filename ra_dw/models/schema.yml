@@ -58,7 +58,7 @@ sources:
       - name: profit_and_loss_export
   - name: hubspot
     database: ra-development
-    schema: hubspot
+    schema: stitch_hubspot
     tables:
       - name: companies
         loaded_at_field: _sdc_sequence
