@@ -8,24 +8,12 @@
 
 with deals as (
 
-        select * from {{ source('hubspot', 'deals') }}
+        select *  from (
+          select *,
+          MAX(_sdc_batched_at) OVER (PARTITION BY dealid ORDER BY _sdc_batched_at RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) latest_sdc_batched_at
+           from {{ source('hubspot', 'deals') }})
+            where latest_sdc_batched_at = _sdc_batched_at
 
-),
-
-deal_stage_with_max as (
-
-       select
-        *,
-        MAX(_sdc_batched_at) OVER (PARTITION BY dealid ORDER BY _sdc_batched_at RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as latest_sdc_batched_at
-
-       from deals
-
-),
-
-latest_version as (
-
-        select * from deal_stage_with_max
-        where _sdc_batched_at = latest_sdc_batched_at
 
 ),
 
@@ -53,7 +41,7 @@ new_deal as (
       properties.description.value AS description,
       properties.dealstage.source as source, -- added 06/11/1
       properties.dealstage.sourceid as salesperson_email, -- added 06/11/2019
-      properties.hs_is_closed.value AS is_closed, -- added 18/12/2019
+      case when properties.closedate.value is not null then true else false end AS is_closed, -- added 18/12/2019
       properties.pricing_model.value AS pricing_model, -- added 18/12/2019
       properties.source.value as deal_source,
       properties.products_in_solution.value as products_in_solution,
@@ -62,6 +50,8 @@ new_deal as (
       properties.partner_referral.value as partner_referral_type,
       properties.deal_components.value as deal_components,
       properties.dealtype.value as deal_type,
+      case when properties.delivery_start_date.timestamp is not null then properties.delivery_schedule_date.timestamp else properties.delivery_start_date.timestamp end as start_date_ts,
+      case when properties.number_of_sprints.value is not null then properties.number_of_sprints.value * 14 end as duration_days,
       case when properties.deal_components.value like '%Services%' then 1 else 0 end as count_services_deal_component,
       case when properties.deal_components.value like '%Training%' then 1 else 0 end as count_support_deal_component,
       case when properties.deal_components.value like '%License Referral%' then 1 else 0 end as count_license_referral_deal_component,
@@ -90,7 +80,7 @@ new_deal as (
       dealid AS deal_id,
       _sdc_batched_at
 
-    from latest_version,
+    from deals,
               unnest(associations.associatedcompanyids) with offset off
 
 )

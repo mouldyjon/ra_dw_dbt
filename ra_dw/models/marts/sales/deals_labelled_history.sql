@@ -26,17 +26,15 @@ joining as (
 
     select *,
     timestamp_diff(current_timestamp,d.start_date_ts,DAY) as days_until_end,
-    timestamp(date_add(date(d.start_date_ts), interval safe_cast(d.duration_months as int64) month)) as end_date_ts,
+    timestamp(date_add(date(d.start_date_ts), interval safe_cast(d.duration_days as int64) day)) as end_date_ts,
     case when (s.stage_label in ('Closed Won and Scheduled','Verbally Won and Working at Risk')
     and timestamp_diff(current_timestamp,start_date_ts,DAY) < 365/2)
     or
       (s.stage_label in ('Closed Won and Scheduled','Verbally Won and Working at Risk')
        and
        d.start_date_ts < current_timestamp
-       and date_add(date(d.start_date_ts), interval safe_cast(d.duration_months as int64) month) > current_date)
+       and date_add(date(d.start_date_ts), interval safe_cast(d.duration_days as int64) day) > current_date)
       then true else false end as is_active
-
-
 
      from deals d
 
@@ -83,7 +81,7 @@ scd_deals as (
       last_value(stage_label) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_stage_label,
       last_value(is_active) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_is_active,
       last_value(start_date_ts) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_start_date_ts,
-      last_value(duration_months) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_duration_months,
+      last_value(duration_days) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_duration_days,
       last_value(end_date_ts) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_end_date_ts,
 
 
