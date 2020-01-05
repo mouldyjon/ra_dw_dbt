@@ -58,7 +58,12 @@
           properties.partner_referral.value as partner_referral_type,
           properties.deal_components.value as deal_components,
           properties.dealtype.value as deal_type,
-          case when properties.delivery_start_date.timestamp is not null then properties.delivery_schedule_date.timestamp else properties.delivery_start_date.timestamp end as start_date_ts,
+          properties.assigned_consultant.value as assigned_consultant,
+          case when timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64)) > timestamp_millis(safe_cast(properties.delivery_start_date.value as int64))  then timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64))
+            when timestamp_millis(safe_cast(properties.delivery_start_date.value as int64)) >= timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64)) then timestamp_millis(safe_cast(properties.delivery_start_date.value as int64))
+            when timestamp_millis(safe_cast(properties.delivery_start_date.value as int64)) is null then timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64))
+            when timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64)) is null then timestamp_millis(safe_cast(properties.delivery_start_date.value as int64))
+            end as start_date_ts,
           case when properties.number_of_sprints.value is not null then properties.number_of_sprints.value * 14 end as duration_days,
           case when properties.deal_components.value like '%Services%' then 1 else 0 end as count_services_deal_component,
           case when properties.deal_components.value like '%Training%' then 1 else 0 end as count_support_deal_component,
