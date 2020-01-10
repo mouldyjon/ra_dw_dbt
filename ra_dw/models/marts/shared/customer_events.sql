@@ -41,25 +41,22 @@ FROM
   FROM
   -- sales opportunity stages
       (SELECT
-  		    deals.lastmodifieddate AS event_ts,
+  		    deals.current_dealstage_ts AS event_ts,
           customer_master.customer_id AS customer_id,
           customer_master.customer_name AS customer_name,
-          concat(concat(owners.firstname,' '),owners.lastname) as event_source,
-  	      deals.dealname AS event_details,
-  	      deals.dealstage AS event_type,
-  	      AVG(deals.amount) AS event_value,
-          sum(1) as event_units
+          deals.partner_referral_type as event_source,
+  	      deals.current_dealname AS event_details,
+  	      deals.current_stage_label AS event_type,
+  	      deals.current_amount * deals.current_probability AS event_value,
+          1 as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
-          {{ ref('deals') }} AS deals
+          {{ ref('deals_labelled_history') }} AS deals
           ON customer_master.hubspot_company_id = deals.associatedcompanyids
       LEFT JOIN
           {{ ref('owners') }} AS owners
           ON deals.hubspot_owner_id = CAST(owners.ownerid AS STRING)
-      WHERE
-          deals.lastmodifieddate IS NOT null
-      {{ dbt_utils.group_by(n=6) }}
       UNION ALL
 
   -- incoming and outgoing emails
