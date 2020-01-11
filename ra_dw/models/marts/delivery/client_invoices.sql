@@ -8,12 +8,13 @@ row_number() over (partition by i.client_id order by i.created_at) as client_inv
 date_diff(date(i.created_at),date(first_value(i.created_at) over (partition by i.client_id order by i.created_at)),MONTH) as months_since_first_invoice,
 date_diff(date(i.created_at),date(first_value(i.created_at) over (partition by i.client_id order by i.created_at)),QUARTER) as quarters_since_first_invoice,
 amount - ifnull(cast(tax_amount as float64),0) - ifnull(cast(e.total_rechargeable_expenses as float64),0) as net_amount,
-a.total_amount_billed,
-a.services_amount_billed,
-a.license_referral_fee_amount_billed,
-a.expenses_amount_billed,
-a.support_amount_billed,
-a.tax_billed
+ifnull(a.total_amount_billed,0) as total_amount_billed,
+ifnull(a.services_amount_billed,0) as services_amount_billed,
+ifnull(a.license_referral_fee_amount_billed,0) as license_referral_fee_amount_billed,
+ifnull(a.expenses_amount_billed,0) as expenses_amount_billed,
+ifnull(a.support_amount_billed,0) as support_amount_billed,
+ifnull(a.tax_billed,0) as tax_billed,
+ifnull(a.services_amount_billed,0) + ifnull(a.license_referral_fee_amount_billed,0) + ifnull(a.support_amount_billed,0) as revenue_amount_billed,
 from {{ ref ('harvest_invoices') }} i
 join (select *,
        case when taxed then total_amount_billed *.2 end as tax_billed
