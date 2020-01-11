@@ -26,26 +26,6 @@ models:
         description: This is a unique identifier for the pipe line
         tests:
               - not_null
-  - name: deals
-    columns:
-      - name: hubspot_owner_id
-        description: HubSpot uses owners to assign CRM objects (contacts, companies, and deals) to specific people in your organization.
-        tests:
-      - name: deadstage_id
-        description: This is a unique identifier for the deal stage
-        tests:
-      - name: deal_id
-        description: This is a unique identifier for the corrosponding deal
-        tests:
-              - not_null
-              - unique
-  - name: deals_labelled
-    columns:
-      - name: deal_id
-        description: This is a unique identifier for the pipe line
-        tests:
-              - not_null
-              - unique
   - name: hubspot_companies
     columns:
       - name: hubspot_owner_id
@@ -54,6 +34,4 @@ models:
     columns:
       - name: ownerid
         description: HubSpot uses owners to assign CRM objects (contacts, companies, and deals) to specific people in your organization.
-        tests:
-              - not_null
-              - unique
+        

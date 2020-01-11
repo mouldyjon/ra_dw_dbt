@@ -32,9 +32,4 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 
 models:
-  segment:
-    vars:
-      segment_page_views_table: "{{ source('segment', 'pages') }}"
-      segment_sessionization_trailing_window: 3
-      segment_inactivity_cutoff: 30 * 60
-      segment_pass_through_columns: []
+  

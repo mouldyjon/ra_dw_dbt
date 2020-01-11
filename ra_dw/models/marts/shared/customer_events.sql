@@ -52,7 +52,7 @@ FROM
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
-          {{ ref('deals_labelled_history') }} AS deals
+          {{ ref('deals') }} AS deals
           ON customer_master.hubspot_company_id = deals.associatedcompanyids
       LEFT JOIN
           {{ ref('owners') }} AS owners
