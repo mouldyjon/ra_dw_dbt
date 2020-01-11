@@ -4,6 +4,9 @@ sources:
   - name: jira
     database: ra-development
     schema: stitch_jira
+    freshness:
+      warn_after: {count: 2, period: hour}
+      error_after: {count: 6, period: hour}
     tables:
       - name: projects
         identifier: projects
@@ -28,6 +31,9 @@ sources:
   - name: xero
     database: ra-development
     schema: xero
+    freshness:
+      warn_after: {count: 2, period: hour}
+      error_after: {count: 6, period: hour}
     tables:
       - name: contacts
         identifier: contacts
@@ -39,7 +45,9 @@ sources:
   - name: segment
     database: ra-development
     schema: company_website
-    tables:
+    freshness:
+      warn_after: {count: 2, period: hour}
+      error_after: {count: 6, period: hour}
     tables:
       - name: pages
         identifier: pages
@@ -58,6 +66,9 @@ sources:
       - name: profit_and_loss_export
   - name: hubspot
     database: ra-development
+    freshness:
+      warn_after: {count: 2, period: hour}
+      error_after: {count: 6, period: hour}
     schema: stitch_hubspot
     tables:
       - name: companies
@@ -72,27 +83,11 @@ sources:
         loaded_at_field: _sdc_sequence
       - name: owners
         loaded_at_field: _sdc_sequence
-  - name: harvest_forecast
-    database: ra-development
-    schema: harvest_forecast
-    tables:
-      - name: assignments
-
-        loaded_at_field: _sdc_sequence
-      - name: clients
-
-        loaded_at_field: _sdc_sequence
-      - name: milestones
-
-        loaded_at_field: _sdc_sequence
-      - name: people
-
-        loaded_at_field: _sdc_sequence
-      - name: projects
-
-        loaded_at_field: _sdc_sequence
   - name: harvest
     database: ra-development
+    freshness:
+      warn_after: {count: 2, period: hour}
+      error_after: {count: 6, period: hour}
     schema: rittman_analytics
     tables:
       - name: clients
