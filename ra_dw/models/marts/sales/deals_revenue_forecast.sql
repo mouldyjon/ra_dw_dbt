@@ -3,35 +3,28 @@
         materialized='table'
     )
 }}
-
 WITH daily_weighted_revenue as (
   SELECT
     *,
-    (current_amount * current_probability) / nullif(contract_days,0) AS contract_daily_weighted_revenue,
-    current_amount / nullif(contract_days,0) AS contract_daily_full_revenue,
-    (current_amount / nullif(contract_days,0)) - ((current_amount * current_probability) / nullif(contract_days,0)) AS contract_diff_daily_revenue
+    (amount * probability) / nullif(contract_days,0) AS contract_daily_weighted_revenue,
+    amount / contract_days AS contract_daily_full_revenue,
+    (amount / contract_days) - ((amount * probability) / contract_days) AS contract_diff_daily_revenue
   FROM (
     SELECT
       *,
-      TIMESTAMP_DIFF(current_end_date_ts,current_start_date_ts,DAY) AS contract_days
+      TIMESTAMP_DIFF(end_date_ts,start_date_ts,DAY) AS contract_days
     FROM (
       SELECT
-        current_dealname,
+        dealname,
         deal_id,
-        current_amount,
-        current_probability,
-        CASE WHEN (current_start_date_ts IS NULL OR current_start_date_ts < current_timestamp) and current_stage_label in ('Initial Enquiry','Meeting and Sales Qualified','Presentation Given & Sprints Scoped','Awaiting Proposal') THEN TIMESTAMP(DATE_ADD(DATE_TRUNC(current_date,WEEK), INTERVAL 29 DAY))
-             WHEN (current_start_date_ts IS NULL OR current_start_date_ts < current_timestamp) and current_stage_label not in ('Initial Enquiry','Meeting and Sales Qualified','Presentation Given & Sprints Scoped','Awaiting Proposal') THEN TIMESTAMP(DATE_ADD(DATE_TRUNC(current_date,WEEK), INTERVAL 15 DAY))
-          ELSE current_start_date_ts END AS current_start_date_ts,
-        CASE WHEN current_end_date_ts IS NULL and current_stage_label in ('Initial Enquiry','Meeting and Sales Qualified','Presentation Given & Sprints Scoped','Awaiting Proposal') THEN TIMESTAMP_ADD(TIMESTAMP(DATE_ADD(DATE_TRUNC(current_date,WEEK), INTERVAL 29 DAY)), INTERVAL (CAST(ROUND(current_amount/4000,0) AS int64)*14) DAY)
-             WHEN current_end_date_ts IS NULL and current_stage_label not in ('Initial Enquiry','Meeting and Sales Qualified','Presentation Given & Sprints Scoped','Awaiting Proposal') THEN TIMESTAMP_ADD(TIMESTAMP(DATE_ADD(DATE_TRUNC(current_date,WEEK), INTERVAL 29 DAY)), INTERVAL (CAST(ROUND(current_amount/4000,0) AS int64)*14) DAY)
-          ELSE current_end_date_ts END AS current_end_date_ts,
-        CASE WHEN (current_start_date_ts IS NULL OR current_end_date_ts IS NULL or current_start_date_ts < current_timestamp) THEN TRUE
-          ELSE FALSE END AS estimated_start_end_dates,
+        amount,
+        probability,
+        start_date_ts,
+        end_date_ts
       FROM
         {{ ref('deals') }}
       WHERE
-        current_stage_label not in ('Closed Lost','Closed Won and Delivered')
+        stage_label not in ('Closed Lost','Closed Won and Delivered')
       GROUP BY
         1,2,3,4,5,6,7))
 ),
@@ -53,6 +46,6 @@ from (
        sum(contract_diff_daily_revenue) daily_diff_revenue
   FROM months m
   JOIN daily_weighted_revenue d
-  ON TIMESTAMP(m.day_ts) between d.current_start_date_ts and timestamp_sub(d.current_end_date_ts, interval 1 day)
+  ON TIMESTAMP(m.day_ts) between d.start_date_ts and timestamp_sub(d.end_date_ts, interval 1 day)
   GROUP BY 1,2)
 GROUP BY  1,2
