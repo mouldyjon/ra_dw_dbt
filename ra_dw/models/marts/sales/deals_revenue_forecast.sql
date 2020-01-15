@@ -26,7 +26,7 @@ WITH daily_weighted_revenue as (
       WHERE
         stage_label not in ('Closed Lost','Closed Won and Delivered')
       GROUP BY
-        1,2,3,4,5,6,7))
+        1,2,3,4,5,6))
 ),
 months as (
   SELECT *
