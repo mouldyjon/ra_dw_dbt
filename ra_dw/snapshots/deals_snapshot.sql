@@ -64,7 +64,9 @@
             when timestamp_millis(safe_cast(properties.delivery_start_date.value as int64)) is null then timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64))
             when timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64)) is null then timestamp_millis(safe_cast(properties.delivery_start_date.value as int64))
             end as start_date_ts,
-          case when properties.number_of_sprints.value is not null then properties.number_of_sprints.value * 14 end as duration_days,
+          case when properties.number_of_sprints.value is not null then properties.number_of_sprints.value * 14
+              when properties.number_of_sprints.value is null and properties.sprint_type.value like '%Data Analytics%' then (properties.amount_in_home_currency.value / 4000) * 14
+              when properties.number_of_sprints.value is null and properties.sprint_type.value like '%Data Engineering%' then (properties.amount_in_home_currency.value / 6000) * 14 end as duration_days,
           case when properties.deal_components.value like '%Services%' then 1 else 0 end as count_services_deal_component,
           case when properties.deal_components.value like '%Training%' then 1 else 0 end as count_support_deal_component,
           case when properties.deal_components.value like '%License Referral%' then 1 else 0 end as count_license_referral_deal_component,
