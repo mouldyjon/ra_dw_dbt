@@ -1,0 +1,4 @@
+###DIRECTORY SETUP
+#touch {project directory}
+#dbt init
+#clone from github: git clone git@github.com:your-organization/your-dbt-project.git
