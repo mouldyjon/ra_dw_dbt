@@ -15,16 +15,16 @@ WITH daily_weighted_revenue as (
       TIMESTAMP_DIFF(end_date_ts,start_date_ts,DAY) AS contract_days
     FROM (
       SELECT
-        dealname,
+        current_dealname as dealname,
         deal_id,
-        amount,
-        probability,
-        start_date_ts,
-        end_date_ts
+          current_amount as amount,
+          current_probability as probability,
+          current_start_date_ts as start_date_ts,
+          current_end_date_ts as end_date_ts
       FROM
         {{ ref('deals') }}
       WHERE
-        stage_label not in ('Closed Lost','Closed Won and Delivered')
+          current_stage_label not in ('Closed Lost','Closed Won and Delivered')
       GROUP BY
         1,2,3,4,5,6))
 ),
