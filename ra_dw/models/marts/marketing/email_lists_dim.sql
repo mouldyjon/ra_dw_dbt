@@ -43,7 +43,7 @@ latest_version AS (
   SELECT
     *
   FROM
-    select_campaigns
+    select_lists
   WHERE
     _sdc_batched_at = max_sdc_batched_at
 )

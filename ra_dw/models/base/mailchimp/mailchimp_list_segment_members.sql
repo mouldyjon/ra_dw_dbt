@@ -4,11 +4,11 @@ SELECT
   _sdc_sequence AS _sdc_sequence,
   _sdc_table_version AS _sdc_table_version,
   email_address AS email_address,
-  id AS list_segment_id,
+  listmembers.id AS list_member_id,
+  list_id AS list_id,
   ip_opt AS ip_opted_in,
   language AS language,
   last_changed AS last_changed_at,
-  list_id AS list_id,
   location.country_code AS country_code,
   location.latitude AS latitude,
   location.longitude AS longitude,
@@ -19,13 +19,25 @@ SELECT
   merge_fields.fname AS forename,
   merge_fields.lname AS surname,
   merge_fields.phone AS phone_number,
+  merge_fields.address__re.addr1 AS address_line_1,
+  merge_fields.address__re.addr2 AS address_line_2,
+  merge_fields.address__re.city AS city,
+  merge_fields.address__re.country AS country,
+  merge_fields.address__re.state AS state,
+  merge_fields.address__re.zip AS post_code,
+  source AS source,
   stats.avg_click_rate AS avg_click_rate,
   stats.avg_open_rate AS avg_open_rate,
   status AS status,
+  tags_count AS segment_count,
+  Tags.id AS segment_id,
+  Tags.name AS segment_name,
   timestamp_opt AS opted_in_at,
-  unique_email_id AS email_id
+  unique_email_id AS email_id,
+  unsubscribe_reason AS unsubscribe_reason
 FROM
   {{ source(
     'stitch_mailchimp',
-    'list_segment_members'
-  ) }}
+    'list_members'
+  ) }} AS listmembers,
+  UNNEST(tags) AS Tags

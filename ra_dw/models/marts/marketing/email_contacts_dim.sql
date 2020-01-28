@@ -25,7 +25,7 @@ WITH contacts AS (
     list.email_id
   FROM
   {{ ref('mailchimp_list_members') }} list,
-  {{ ref('mailchimp_segment_members') }} segment
+  {{ ref('mailchimp_list_segment_members') }} segment
   WHERE
   list.email_id = segment.email_id
 ),

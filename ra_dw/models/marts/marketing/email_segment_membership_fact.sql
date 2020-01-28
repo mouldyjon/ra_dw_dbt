@@ -2,7 +2,7 @@ WITH segment_members AS (
   SELECT
     *
   FROM
-    {{ ref('mailchimp_segment_members') }}
+    {{ ref('mailchimp_list_segment_members') }}
 ),
 select_segment_members AS (
   SELECT
