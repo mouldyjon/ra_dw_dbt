@@ -4,7 +4,7 @@ SELECT
   _sdc_sequence AS _sdc_sequence,
   _sdc_table_version AS _sdc_table_version,
   email_address AS email_address,
-  id AS list_segment_id,
+  id AS list_member_id,
   ip_opt AS ip_opted_in,
   language AS language,
   last_changed AS last_changed_at,

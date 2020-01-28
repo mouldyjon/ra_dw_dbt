@@ -11,7 +11,7 @@ select_segments AS (
   _sdc_sequence,
   _sdc_table_version,
   created_at,
-  segement_id,
+  segment_id,
   list_id,
   member_count,
   name,
