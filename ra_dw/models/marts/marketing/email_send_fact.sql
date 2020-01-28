@@ -1,15 +1,45 @@
-WITH campaigns AS (
+WITH
+campaigns AS (
   SELECT
     *
   FROM
     {{ ref('email_campaigns_dim') }}
 ),
+
 list_members AS (
   SELECT
     *
   FROM
     {{ ref('email_list_membership_fact') }}
 ),
+
+responses AS (
+  SELECT
+  *,
+  MAX(_sdc_batched_at) over (
+    PARTITION BY event_id
+    ORDER BY
+      _sdc_batched_at RANGE BETWEEN unbounded preceding
+      AND unbounded following
+  ) AS max_sdc_batched_at
+  FROM
+    {{ ref('mailchimp_reports_email_activity') }}
+),
+
+latest_response_counts AS (
+  SELECT
+    SUM(CASE WHEN responses.event = 'bounce' THEN 1 ELSE 0 END) AS count_bounces,
+    SUM(CASE WHEN responses.event = 'open' THEN 1 ELSE 0 END) AS count_opens,
+    SUM(CASE WHEN responses.event = 'click' THEN 1 ELSE 0 END) AS count_clicks,
+    MAX(email_id),
+    send_id
+  FROM
+    responses
+  WHERE
+    _sdc_batched_at = max_sdc_batched_at
+  GROUP BY send_id
+),
+
 sends AS (
   SELECT
     CONCAT(
@@ -39,15 +69,26 @@ sends AS (
     campaigns.title,
     campaigns.to_name,
     campaigns.status
-    --need to add number of clicks, opens, bounces?
-    --does this help or actually remove valuable granularity about what was clicked?
   FROM
     campaigns
     INNER JOIN list_members AS listmembers ON campaigns.list_id = listmembers.list_id
   WHERE
     campaigns.sent_at IS NOT NULL
+),
+
+send_stats AS (
+  SELECT
+  sends.*,
+  latest_response_counts.count_bounces,
+  latest_response_counts.count_opens,
+  latest_response_counts.count_clicks
+  FROM sends
+  INNER JOIN
+  latest_response_counts ON
+  sends.send_id = latest_response_counts.send_id
 )
+
 SELECT
   *
 FROM
-  sends
+  send_stats

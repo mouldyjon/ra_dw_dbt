@@ -13,7 +13,8 @@ SELECT
   timestamp AS event_at,
   type AS bounce_type,
   url AS url,
-  CONCAT(campaign_id,'_',email_id,'_',STRING(timestamp)) AS send_id
+  CONCAT(campaign_id,'_',email_id,'_',STRING(timestamp)) AS event_id,
+  CONCAT(email_id,'_',campaign_id,'_',list_id) AS send_id
 FROM
   {{ source(
     'stitch_mailchimp',
