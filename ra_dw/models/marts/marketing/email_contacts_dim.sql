@@ -20,22 +20,17 @@ WITH contacts AS (
     status AS status,
     opted_in_at AS opted_in_at,
     email_id AS email_id,
-    _sdc_table_version,
-    email_id
+    _sdc_table_version
   FROM
-  {{ ref('mailchimp_list_members') }} list,
-  {{ ref('mailchimp_list_segment_members') }} segment
-  WHERE
-  list.email_id = segment.email_id
+  {{ ref('mailchimp_list_members') }}
 ),
 select_contacts AS (
   SELECT
     *,
     MAX(_sdc_batched_at) over (
-      PARTITION BY (
-        email_address,
+      PARTITION BY
+        email_id,
         last_changed_at
-      )
       ORDER BY
         _sdc_batched_at RANGE BETWEEN unbounded preceding
         AND unbounded following

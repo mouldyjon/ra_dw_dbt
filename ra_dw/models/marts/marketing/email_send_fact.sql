@@ -12,12 +12,14 @@ list_members AS (
 ),
 sends AS (
   SELECT
+    CONCAT(
+      listmembers.email_id,'_',campaigns.campaign_id,'_',campaigns.list_id
+    ) AS send_id,
     listmembers.email_id,
     campaigns.campaign_id,
     campaigns._sdc_batched_at,
     campaigns.created_at,
     campaigns.number_emails_sent,
-    campaigns.campaign_id,
     campaigns.archive_url,
     campaigns.list_id,
     campaigns.list_is_active,
@@ -37,16 +39,15 @@ sends AS (
     campaigns.title,
     campaigns.to_name,
     campaigns.status
-    CONCAT(listmembers.email_id, '_',campaigns.campaign_id,'_',campaigns.list_id) AS send_id
     --need to add number of clicks, opens, bounces?
-    --does this help or actually remove valuable granularity about what was clicked? 
+    --does this help or actually remove valuable granularity about what was clicked?
   FROM
     campaigns
-    INNER JOIN list_members ON campaigns.list_id = list_members.list_id
+    INNER JOIN list_members AS listmembers ON campaigns.list_id = listmembers.list_id
   WHERE
     campaigns.sent_at IS NOT NULL
 )
 SELECT
   *
 FROM
-  latest_version
+  sends
