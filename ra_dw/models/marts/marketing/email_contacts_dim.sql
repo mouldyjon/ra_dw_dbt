@@ -4,7 +4,7 @@ WITH contacts AS (
     email_address AS email_address,
     ip_opted_in AS ip_opted_in,
     language AS language,
-    last_changed_at AS last_changed_at,
+    last_changed_at AS valid_from,
     country_code AS country_code,
     latitude AS latitude,
     longitude AS longitude,
@@ -24,27 +24,29 @@ WITH contacts AS (
   FROM
   {{ ref('mailchimp_list_members') }}
 ),
+
 select_contacts AS (
   SELECT
     *,
     MAX(_sdc_batched_at) over (
       PARTITION BY
         email_id,
-        last_changed_at
+        valid_from
       ORDER BY
         _sdc_batched_at RANGE BETWEEN unbounded preceding
         AND unbounded following
-    ) AS max_sdc_batched_at
+    ) AS valid_to
   FROM
     contacts
 ),
+
 latest_version AS (
   SELECT
     *
   FROM
     select_contacts
   WHERE
-    _sdc_batched_at = max_sdc_batched_at
+    _sdc_batched_at = valid_to
 )
 SELECT
   *
