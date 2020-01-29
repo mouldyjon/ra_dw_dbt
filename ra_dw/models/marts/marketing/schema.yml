@@ -4,13 +4,13 @@ models:
   - name: email_campaign_content_links_dim
     tests:
         - unique:
-              - column_name: "concat(campaign_id, url)"
+              column_name: "CONCAT(campaign_id,url)"
         - not_null:
-              - column_name: campaign_id
+               column_name: campaign_id
         - relationships:
-              - column_name: campaign_id
-              - to: ref('email_campaigns_dim')
-              - field: campaign_id
+               column_name: campaign_id
+               to: ref('email_campaigns_dim')
+               field: campaign_id
   - name: email_campaigns_dim
     columns:
       - name: campaign_id
@@ -19,45 +19,46 @@ models:
               - not_null
               - unique
   - name: email_contacts_dim
-    columns:
-      - name: pipelineid
-        description: This is a unique identifier for the pipe line
-        tests:
-              - not_null
+    tests:
+        - unique:
+               column_name: "CONCAT(email_id,'-', STRING(valid_to))"
+        - not_null:
+               column_name: email_id
+               column_name: valid_from
   - name: email_list_membership_fact
-    columns:
-      - name: stageid
-        description: This is a unique identifier for the pipe line
-        tests:
-              - not_null
+    tests:
+        - unique:
+               column_name: "CONCAT(list_member_id, STRING(valid_from))"
+        - not_null:
+               column_name: list_member_id
+               column_name: email_id
+               column_name: valid_from
   - name: email_lists_dim
     columns:
-      - name: hubspot_owner_id
-        description: HubSpot uses owners to assign CRM objects (contacts, companies, and deals) to specific people in your organization.
-        tests:
-      - name: deadstage_id
-        description: This is a unique identifier for the deal stage
-        tests:
-      - name: deal_id
-        description: This is a unique identifier for the corrosponding deal
+      - name: list_id
+        description: The unique identifier for each list.
         tests:
               - not_null
               - unique
   - name: email_segment_membership_fact
-    columns:
-      - name: deal_id
-        description: This is a unique identifier for the pipe line
-        tests:
-              - not_null
-              - unique
+    tests:
+        - unique:
+               column_name: "CONCAT(list_member_id,STRING(segment_id), STRING(valid_from))"
+        - not_null:
+               column_name: list_member_id
+               column_name: email_id
+               column_name: valid_from
   - name: email_segments_dim
-    columns:
-      - name: hubspot_owner_id
-        description: HubSpot uses owners to assign CRM objects (contacts, companies, and deals) to specific people in your organization.
+    tests:
+        - unique:
+               column_name: segment_id
+        - not_null:
+               column_name: segment_id
   - name: email_send_fact
-    columns:
-      - name: ownerid
-        description: HubSpot uses owners to assign CRM objects (contacts, companies, and deals) to specific people in your organization.
-        tests:
-              - not_null
-              - unique
+    tests:
+        - unique:
+               column_name: send_id
+        - not_null:
+               column_name: send_id
+               column_name: campaign_id
+               column_name: list_id

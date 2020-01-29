@@ -14,7 +14,7 @@ select_list_members AS (
     opted_in_at,
     email_id,
     MAX(_sdc_batched_at) over (
-      PARTITION BY list_member_id, valid_from
+      PARTITION BY list_member_id, last_changed_at
       ORDER BY _sdc_batched_at
       RANGE BETWEEN unbounded preceding AND unbounded following
     ) AS valid_to

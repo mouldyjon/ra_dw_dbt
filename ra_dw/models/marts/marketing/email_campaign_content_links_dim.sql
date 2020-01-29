@@ -24,7 +24,8 @@ links AS (
     campaign_id,
   FROM
     latest_version
-    GROUP BY url, campaign_id
+  WHERE url IS NOT NULL
+  GROUP BY url, campaign_id
 )
 SELECT
   *

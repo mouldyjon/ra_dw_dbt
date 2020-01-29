@@ -15,11 +15,11 @@ select_segment_members AS (
     opted_in_at,
     email_id,
     unsubscribe_reason,
-      MAX(_sdc_batched_at) over (
-      PARTITION BY list_member_id
-      ORDER BY
-        _sdc_batched_at RANGE BETWEEN unbounded preceding
-        AND unbounded following
+    MAX(_sdc_batched_at) over (
+    PARTITION BY list_member_id
+    ORDER BY
+      _sdc_batched_at RANGE BETWEEN unbounded preceding
+      AND unbounded following
     ) AS valid_to
   FROM
     segment_members
