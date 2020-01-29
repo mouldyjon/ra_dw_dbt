@@ -2,7 +2,7 @@ WITH reports_email_activity AS (
   SELECT
     *,
     MAX(_sdc_batched_at) over (
-      PARTITION BY list_id
+      PARTITION BY event_id
       ORDER BY
         _sdc_batched_at RANGE BETWEEN unbounded preceding
         AND unbounded following

@@ -19,7 +19,7 @@ select_lists AS (
     default_from_phone,
     default_from_state,
     default_from_zip,
-    NAME,
+    name,
     last_sub_date,
     last_unsub_date,
     member_count,
