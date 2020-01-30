@@ -43,10 +43,11 @@ models:
   - name: email_segment_membership_fact
     tests:
         - unique:
-               column_name: "CONCAT(list_member_id,STRING(segment_id), STRING(valid_from))"
+               column_name: "CONCAT(list_member_id,'-',CAST(segment_id as STRING), STRING(valid_from))"
         - not_null:
                column_name: list_member_id
                column_name: email_id
+               column_name: segment_id
                column_name: valid_from
   - name: email_segments_dim
     tests:

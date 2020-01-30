@@ -16,7 +16,7 @@ select_segment_members AS (
     email_id,
     unsubscribe_reason,
     MAX(_sdc_batched_at) over (
-    PARTITION BY list_member_id
+    PARTITION BY list_member_id, last_changed_at
     ORDER BY
       _sdc_batched_at RANGE BETWEEN unbounded preceding
       AND unbounded following

@@ -43,7 +43,7 @@ latest_response_counts AS (
 sends AS (
   SELECT
     CONCAT(
-      listmembers.email_id,'_',campaigns.campaign_id,'_',campaigns.list_id
+    listmembers.list_member_id,'_',campaigns.campaign_id,'_',campaigns.list_id
     ) AS send_id,
     listmembers.email_id,
     campaigns.campaign_id,
@@ -78,12 +78,12 @@ sends AS (
 
 send_stats AS (
   SELECT
-  sends.*,
-  latest_response_counts.count_bounces,
-  latest_response_counts.count_opens,
-  latest_response_counts.count_clicks
+    sends.*,
+    COALESCE(latest_response_counts.count_bounces,0) AS count_bounces,
+    COALESCE(latest_response_counts.count_opens,0)  AS count_opens,
+    COALESCE(latest_response_counts.count_clicks,0) AS count_clicks
   FROM sends
-  INNER JOIN
+  LEFT JOIN
   latest_response_counts ON
   sends.send_id = latest_response_counts.send_id
 )
