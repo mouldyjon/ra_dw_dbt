@@ -59,6 +59,7 @@
           properties.deal_components.value as deal_components,
           properties.dealtype.value as deal_type,
           properties.assigned_consultant.value as assigned_consultant,
+          properties.harvest_project_id.value as harvest_project_id,
           case when timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64)) > timestamp_millis(safe_cast(properties.delivery_start_date.value as int64))  then timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64))
             when timestamp_millis(safe_cast(properties.delivery_start_date.value as int64)) >= timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64)) then timestamp_millis(safe_cast(properties.delivery_start_date.value as int64))
             when timestamp_millis(safe_cast(properties.delivery_start_date.value as int64)) is null then timestamp_millis(safe_cast(properties.delivery_schedule_date.value as int64))

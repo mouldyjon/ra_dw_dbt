@@ -83,6 +83,14 @@ scd_deals as (
       last_value(start_date_ts) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_start_date_ts,
       last_value(duration_days) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_duration_days,
       last_value(end_date_ts) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_end_date_ts,
+      last_value(assigned_consultant) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_assigned_consultant,
+      last_value(harvest_project_id) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_harvest_project_id,
+      last_value(products_in_solution) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_products_in_solution,
+      last_value(deal_components) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_deal_components,
+      last_value(partner_referral_type) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_partner_referral_type,
+      last_value(sprint_type) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_sprint_type,
+      last_value(deal_source) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_deal_source,
+      last_value(deal_type) over (partition by deal_id order by dbt_updated_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_deal_type,
 
 
 
