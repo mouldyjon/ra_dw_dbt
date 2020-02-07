@@ -88,12 +88,12 @@ FROM
           cast(null as string) as event_source,
   	      invoices.subject AS event_details,
           'Client Invoiced' AS event_type,
-  	      SUM(invoices.amount) AS event_value,
+  	      SUM(invoices.revenue_amount_billed) AS event_value,
           sum(1) as event_units
       FROM
           {{ ref('customer_master') }} AS customer_master
       LEFT JOIN
-          {{ ref('harvest_invoices') }} AS invoices
+          {{ ref('client_invoices') }} AS invoices
           ON customer_master.harvest_customer_id = invoices.client_id
       WHERE
           invoices.issue_date IS NOT null
@@ -152,6 +152,7 @@ FROM
     ON
       all_history.site = c.customer_name
     {{ dbt_utils.group_by(n=6) }}
+  
   UNION ALL
           SELECT
                   event_ts,
