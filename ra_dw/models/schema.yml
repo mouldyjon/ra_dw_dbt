@@ -31,17 +31,15 @@ sources:
   - name: xero
     database: ra-development
     schema: xero
-    freshness:
-      warn_after: {count: 2, period: hour}
-      error_after: {count: 6, period: hour}
     tables:
-      - name: contacts
-        identifier: contacts
-        loaded_at_field: _sdc_sequence
       - name: accounts
-        loaded_at_field: _sdc_sequence
+      - name: tracking_categories
       - name: bank_transactions
-        loaded_at_field: _sdc_sequence
+      - name: contacts
+      - name: currencies
+      - name: expense_claims
+      - name: invoices
+      - name: payments
   - name: segment
     database: ra-development
     schema: company_website

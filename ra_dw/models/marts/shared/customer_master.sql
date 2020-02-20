@@ -14,7 +14,7 @@ SELECT
     CONCAT('Customer ', CAST(ROW_NUMBER() OVER() AS string)) AS demo_company_name,
     CASE WHEN harvest_customer_id IS NOT null THEN true ELSE false END AS is_services_client,
     CASE WHEN hubspot_company_id IS NOT null THEN true ELSE false END AS is_crm_tracked_client,
-    CASE WHEN xero_is_supplier IS true THEN true ELSE false END AS is_supplier_company,
+    CASE WHEN contact_is_supplier IS true THEN true ELSE false END AS is_supplier_company,
 *
 FROM
     (SELECT
@@ -23,12 +23,12 @@ FROM
         (SELECT
             customer_name,
             hubspot_company_id,
-            xero_contact_id,
+            contact_id as xero_contact_id,
             harvest_customer_id,
             harvest_address,
-            xero_is_customer,
-            xero_is_supplier,
-            xero_customer_status,
+            contact_is_customer,
+            contact_is_supplier,
+            contact_status,
             harvest_customer_created_at,
             harvest_customer_currency,
             harvest_customer_is_active,
