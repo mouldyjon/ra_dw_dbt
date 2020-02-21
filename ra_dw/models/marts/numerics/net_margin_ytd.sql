@@ -1,3 +1,8 @@
+{{
+    config(
+        materialized='table'
+    )
+}}
 SELECT
     'YTD Average' AS period,
     AVG(financial_results.net_margin_pct ) AS financial_results_avg_net_margin_pct

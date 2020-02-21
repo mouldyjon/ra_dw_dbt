@@ -4,7 +4,7 @@
       2. The name of the table in that source
 */
 
-select * from {{ source('xero', 'accounts') }}
+select * from {{ source('xero', 'contacts') }}
 
 /*
 	This is compiled to:
