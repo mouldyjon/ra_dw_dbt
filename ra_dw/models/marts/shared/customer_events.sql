@@ -152,7 +152,7 @@ FROM
     ON
       all_history.site = c.customer_name
     {{ dbt_utils.group_by(n=6) }}
-  
+
   UNION ALL
           SELECT
                   event_ts,
@@ -170,23 +170,40 @@ FROM
               ON customer_master.customer_id = client_slack_messages.customer_id
           {{ dbt_utils.group_by(n=6) }}
   UNION ALL
-          SELECT
-                  opportunity_dealstage_events.event_ts,
-                  customer_master.customer_id  AS customer_id,
-                  customer_master.customer_name AS customer_name,
-                  cast(null as string) as event_source,
-                  opportunity_dealstage_events.notes AS event_details,
-                  opportunity_dealstage_events.opportunity_stage as event_type,
-                  sum(cast(opportunity_dealstage_events.opportunity_value as int64)) as event_value,
-                  sum(1) as event_units
-          FROM
-              {{ ref('customer_master') }}  AS customer_master
-         LEFT JOIN
-              {{ ref('opportunity_dealstage_events') }} AS opportunity_dealstage_events
-              ON customer_master.customer_id = opportunity_dealstage_events.customer_id
-          {{ dbt_utils.group_by(n=6) }}
 
-      )
-  WHERE
-      customer_name NOT IN ('Rittman Analytics', 'MJR Analytics')
-  )
+
+SELECT
+    tickets.status_change_ts AS event_ts,
+    customer_master.customer_id  AS customer_id,
+    customer_master.customer_name AS customer_name,
+    tickets.project_name  AS event_source,
+    tickets.summary  AS event_details,
+    'jira_ticket_closed' as event_type,
+    COALESCE(SUM(tickets.issue_hours_to_complete ), 0) AS event_value,
+    COUNT(tickets.id ) AS event_units
+FROM `ra-development.analytics.customer_master` AS customer_master
+    LEFT JOIN (SELECT * from `ra-development.ra_data_warehouse_dbt_prod.tickets`
+        ) AS tickets ON customer_master.customer_id = tickets.customer_id
+WHERE (tickets.statuscategory ) = 'Done'
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5
+  UNION ALL
+  SELECT
+    timesheets.spent_date  AS event_ts,
+    customer_master.customer_id  AS customer_id,
+    customer_master.customer_name AS customer_name,
+    harvest_projects.code  AS event_source,
+    concat(concat(harvest_users.first_name,' '),harvest_users.last_name)  AS event_details,
+    'timesheet_hours_logged' as event_type,
+    timesheets.billable_rate  AS event_value,
+    timesheets.hours  AS event_units
+   FROM {{ ref('customer_master') }} AS customer_master
+   LEFT JOIN {{ ref('timesheets') }} AS timesheets ON customer_master.harvest_customer_id = timesheets.client_id
+   INNER JOIN {{ ref('projects') }} AS harvest_projects ON timesheets.project_id = harvest_projects.id
+   INNER JOIN {{ ref('harvest_users') }} AS harvest_users ON timesheets.user_id = harvest_users.id
+
+))
