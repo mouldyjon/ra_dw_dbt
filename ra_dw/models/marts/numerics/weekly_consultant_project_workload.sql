@@ -9,7 +9,9 @@ SELECT
 FROM `ra-development.analytics.customer_master` AS customer_master
     LEFT JOIN `ra-development.analytics.timesheets` AS timesheets ON customer_master.harvest_customer_id = timesheets.client_id
     INNER JOIN `ra-development.analytics.projects` AS harvest_projects ON timesheets.project_id = harvest_projects.id
+    INNER JOIN `ra-development.analytics.harvest_users` AS harvest_users ON timesheets.user_id = harvest_users.id
 WHERE (((( ( timesheets.spent_date ) ) >= ((TIMESTAMP_ADD(TIMESTAMP_TRUNC(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY), WEEK(MONDAY)), INTERVAL (-6 * 7) DAY))) AND ( ( timesheets.spent_date ) ) < ((TIMESTAMP_ADD(TIMESTAMP_ADD(TIMESTAMP_TRUNC(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY), WEEK(MONDAY)), INTERVAL (-6 * 7) DAY), INTERVAL (6 * 7) DAY)))))) AND ((timesheets.billable ) AND (harvest_projects.is_active ))
+AND ((concat(concat(harvest_users.first_name,' '),harvest_users.last_name) )) not like  '%Janet Rittman%'
 GROUP BY
     1
 ORDER BY
