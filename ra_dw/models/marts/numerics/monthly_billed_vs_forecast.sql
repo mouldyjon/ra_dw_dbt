@@ -20,13 +20,14 @@ WHERE ((timestamp(deal_revenue_forecast.month_ts)  ) >= ((TIMESTAMP_TRUNC(CAST(T
 GROUP BY
     1),
  actual_billed as (
- SELECT
-    ROUND(COALESCE(CAST( ( SUM(DISTINCT (CAST(ROUND(COALESCE(ifnull(harvest_invoices.support_amount_billed,0) + ifnull(license_referral_fee_amount_billed,0) + ifnull(services_amount_billed,0) ,0)*(1/1000*1.0), 9) AS NUMERIC) + (cast(cast(concat('0x', substr(to_hex(md5(CAST(concat(cast(harvest_invoices.id as string),cast(harvest_invoices.invoice_line_item_id as string))   AS STRING))), 1, 15)) as int64) as numeric) * 4294967296 + cast(cast(concat('0x', substr(to_hex(md5(CAST(concat(cast(harvest_invoices.id as string),cast(harvest_invoices.invoice_line_item_id as string))   AS STRING))), 16, 8)) as int64) as numeric)) * 0.000000001 )) - SUM(DISTINCT (cast(cast(concat('0x', substr(to_hex(md5(CAST(concat(cast(harvest_invoices.id as string),cast(harvest_invoices.invoice_line_item_id as string))   AS STRING))), 1, 15)) as int64) as numeric) * 4294967296 + cast(cast(concat('0x', substr(to_hex(md5(CAST(concat(cast(harvest_invoices.id as string),cast(harvest_invoices.invoice_line_item_id as string))   AS STRING))), 16, 8)) as int64) as numeric)) * 0.000000001) )  / (1/1000*1.0) AS FLOAT64), 0), 6) AS harvest_invoices_revenue_amount_billed
-FROM `ra-development.analytics.customer_master` AS customer_master
-    LEFT JOIN `ra-development.analytics.timesheets` AS timesheets ON customer_master.harvest_customer_id = timesheets.client_id
-    INNER JOIN `ra-development.analytics.projects` AS harvest_projects ON timesheets.project_id = harvest_projects.id
-    LEFT JOIN `ra-development.analytics.client_invoices` AS harvest_invoices ON customer_master.harvest_customer_id = harvest_invoices.client_id AND harvest_projects.id = harvest_invoices.project_id
-WHERE ((harvest_invoices.created_at  ) >= ((TIMESTAMP_TRUNC(CAST(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY) AS TIMESTAMP), MONTH))) AND (harvest_invoices.created_at  ) < ((TIMESTAMP(CONCAT(CAST(DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY) AS TIMESTAMP), MONTH) AS DATE), INTERVAL 1 MONTH) AS STRING), ' ', CAST(TIME(CAST(TIMESTAMP_TRUNC(CAST(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY) AS TIMESTAMP), MONTH) AS TIMESTAMP)) AS STRING))))))
+   SELECT round(sum(case when i.currency = 'USD' then i.revenue_amount_billed * .79 else i.revenue_amount_billed end)) as billing
+   from {{ ref('customer_master') }} c
+   left outer join {{ ref('client_invoices') }} i
+   on c.harvest_customer_id = i.client_id
+    where
+    state in ('open','draft')
+    and date_trunc(date(created_at),MONTH) = date_trunc(date(current_timestamp),MONTH)
+    or date_trunc(date(sent_at),MONTH) = date_trunc(date(current_timestamp),MONTH)
  )
-select deal_revenue_forecast_total_weighted_amount_monthly_forecast as forecast, 1 as filler, harvest_invoices_revenue_amount_billed as billed
+select deal_revenue_forecast_total_weighted_amount_monthly_forecast as forecast, 1 as filler, actual_billed.billing as billed
 from forecast_revenue join actual_billed on 1=1
