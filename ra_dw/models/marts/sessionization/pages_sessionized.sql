@@ -16,7 +16,7 @@ SELECT
   ra_blog_page_views_in_session,
   ra_commercial_page_views_in_session,
   dtd_page_views_in_session,
-  case when entrance_url like '%https://drilltodetail.com%' then 'Podcast'
+  case when entrance_url like '%https://drilltodetail.rittmananalytics.com%' then 'Podcast'
        when entrance_url like '%https://rittmananalytics.com/blog%' then 'Blog'
        else 'Prospect' end as session_visitor_type,
 	CASE WHEN (page_views_in_session = 1) THEN
