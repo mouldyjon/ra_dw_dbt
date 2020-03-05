@@ -1,9 +1,10 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        schema='numerics'
     )
 }}
-SELECT c.customer_name, sum(case when i.currency = 'USD' then i.revenue_amount_billed * .79 else i.revenue_amount_billed end) as billing 
+SELECT c.customer_name, sum(case when i.currency = 'USD' then i.revenue_amount_billed * .79 else i.revenue_amount_billed end) as billing
 from {{ ref('customer_master') }} c
 left outer join {{ ref('client_invoices') }} i
 on c.harvest_customer_id = i.client_id

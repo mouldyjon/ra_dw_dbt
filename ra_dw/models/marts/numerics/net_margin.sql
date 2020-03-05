@@ -1,6 +1,7 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        schema='numerics'
     )
 }}
 with net_margin_l3m as (SELECT

@@ -1,6 +1,7 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        schema='numerics'
     )
 }}
 WITH tickets AS (SELECT * from {{ ref('tickets') }}

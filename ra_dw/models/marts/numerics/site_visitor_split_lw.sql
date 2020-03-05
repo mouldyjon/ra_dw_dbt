@@ -1,6 +1,7 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        schema='numerics'
     )
 }}
 WITH pageviews_sessionized AS (SELECT * FROM {{ ref('pages_sessionized') }}
