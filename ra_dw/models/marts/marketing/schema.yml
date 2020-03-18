@@ -63,7 +63,7 @@ models:
                column_name: send_id
                column_name: campaign_id
                column_name: list_id
-  - name: email_send_fact
+  - name: email_response_fact
     tests:
         - unique:
                column_name: event_id
